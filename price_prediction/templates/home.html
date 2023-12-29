@@ -1,0 +1,142 @@
+{% load static %}
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Fruit & Vegetable Price Prediction</title>
+    <link rel="stylesheet" href="{% static 'price_prediction/dashboard.css' %}"/>
+  </head>
+
+  <body>
+    <header>
+      {% include "navbar.html" %}
+
+    </header>
+
+    <section>
+      <h2>Welcome to our Price Prediction System!</h2>
+      <p>
+        Make informed decisions with our accurate predictions of fruit and
+        vegetable prices. Whether you're a farmer, seller, or consumer, our
+        system provides valuable insights for your needs.
+      </p>
+      <p>
+        Get started now and experience the power of data-driven predictions.
+      </p>
+      <a href="#commodities" class="cta-button">Explore Commodities</a>
+    </section>
+
+    <section id="commodities">
+      <h2>Featured Commodities</h2>
+      <div class="card-grid">
+        <div class="card">
+          <a href="/potato/">
+          <img src="{% static 'price_prediction/images/comd1.png' %}" alt="Potato" />
+          <h3>Potato</h3>
+          </a>
+        </div>
+
+        <div class="card">
+          <a href="/home/commodity_detail/">
+          <img src="{% static 'price_prediction/images/comd2.png' %}" alt="Tomato" id="comdimg" />
+          <h3>Tomato</h3>
+          </a>
+        </div>
+
+        <div class="card">
+          <a href="/home/commodity_detail/">
+          <img src="{% static 'price_prediction/images/comd3.png' %}" alt="Carrot" id="commodity-image" />
+          <h3>Carrot</h3>
+          </a>
+        </div>
+	
+
+        <div class="card">
+          <a href="/home/commodity_detail/">
+          <img src="{% static 'price_prediction/images/comd4.png' %}" alt="" id="commodity-image"/>
+          <h3>Lettuce</h3>
+          </a>
+        </div>
+
+        <div class="card">
+          <a href="/home/commodity_detail/">
+          <img src="{% static 'price_prediction/images/comd5.png' %}" alt="" id="commodity-image"/>
+          <h3>Onion</h3>
+          </a>
+        </div>
+	
+        <div class="card">
+          <a href="/home/commodity_detail/">
+          <img src="{% static 'price_prediction/images/comd6.png' %}" alt="" id="commodity-image"/>
+          <h3>Garlic</h3>
+          </a>
+        </div>
+
+        </div>
+    </section>
+    <section id="trends" class="trend-section">
+      <h2>Price Trends</h2>
+      <div class="trend-chart">
+        <h1>Overall Table</h1>
+
+        <table id="overall-table">
+          <!-- Table content will be inserted here -->
+        </table>
+        <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+        <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.5.1/jquery.min.js"></script>
+        <script>
+          // Fetch data from Django API endpoint
+          fetch("/api/serve_overall_table/")
+            .then((response) => response.json())
+            .then((data) => {
+              // Handle the data and update the table
+              updateTable(data);
+            })
+            .catch((error) => console.error("Error:", error));
+
+          // Function to update the HTML table
+          function updateTable(data) {
+            const table = document.getElementById("overall-table");
+            // Clear existing content
+            table.innerHTML = "";
+
+            // Add header row
+            const headerRow = table.insertRow();
+            const commodityHeader = headerRow.insertCell(0);
+            const percentageChangeHeader = headerRow.insertCell(1);
+            commodityHeader.innerHTML = "<b>Commodity</b>";
+            percentageChangeHeader.innerHTML = "<b>Percentage Change</b>";
+
+            // Add data rows
+            data.forEach((entry) => {
+              const row = table.insertRow();
+              const commodityCell = row.insertCell(0);
+              const percentageChangeCell = row.insertCell(1);
+              commodityCell.innerHTML = entry["Commodity"];
+              percentageChangeCell.innerHTML = entry["Percentage Change"];
+            });
+          }
+          //   $(document).ready(function () {
+          //     $('.comdimg').click(function () {
+          //         var commodityId = $(this).attr('id'); // Assuming the ID corresponds to the commodity ID
+          //         $.ajax({
+          //             url: '/get_predicted_price/',
+          //             method: 'GET',
+          //             data: {
+          //                 commodity_id: commodityId
+          //             },
+          //             success: function (response) {
+          //                 window.location.href = `/home/commodity_detail/?predicted_price=${response.PredictedPriceNextWeek}`;
+          //             },
+          //             error: function (error) {
+          //                 console.error('Error fetching predicted price:', error);
+          //             }
+          //         });
+          //     });
+          // });
+
+        </script>
+      </div>
+    </section>
+  </body>
+</html>

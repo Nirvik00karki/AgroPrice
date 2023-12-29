@@ -1,0 +1,36 @@
+/* commodity_detail.css */
+body {
+    font-family: "Arial", sans-serif;
+    margin: 0;
+    padding: 0;
+    background: radial-gradient(#fff,#ffffe0);
+}
+
+section {
+    max-width: 1000px;
+    margin: 2em auto;
+    padding: 1em;
+    background: white;
+    box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+}
+
+/* Adjust other styles as needed for commodity details */
+.commodity-detail {
+    display: flex;
+    align-items: center;
+}
+
+.commodity-image img {
+    max-width: 100%;
+    height: auto;
+    margin-right: 20px; /* Adjust spacing between image and info */
+}
+
+.commodity-info h2 {
+    margin-top: 0;
+}
+
+.commodity-info p {
+    margin-bottom: 20px;
+}
+/* Add more styles as per your requirement */

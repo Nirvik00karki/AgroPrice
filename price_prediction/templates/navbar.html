@@ -1,0 +1,25 @@
+{% load static %}
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <link rel="stylesheet" href="{% static 'price_prediction/index.css' %}" />
+</head>
+<body>
+    <div class="navbar">
+        <div class="logo">
+        <a href="/"><img src="{% static 'price_prediction/images/vegetables1.png' %}" width="125px"></a>
+    </div>  
+    <nav>
+        <ul id="MenuItems">
+            <li><a href="/">Home</a></li>
+            <li><a href="/account/">Account</a></li>
+            {% if user.is_authenticated %}
+            <li><a href="/home/">Dashboard</a></li>
+          {% endif %}
+        </ul>
+    </nav>
+    <img src="{% static 'price_prediction/images/menu.png' %}" class="menu-icon" onclick="menutoggle()">
+    </div>  
+    <hr>
+</body>
+</html>

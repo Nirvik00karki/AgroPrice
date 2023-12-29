@@ -1,0 +1,82 @@
+body {
+    font-family: "Arial", sans-serif;
+    margin: 0;
+    padding: 0;
+    background: radial-gradient(#fff,#ffffe0);
+  }
+
+
+  section {
+    max-width: 1000px;
+    margin: 2em auto;
+    padding: 1em;
+    background: white;
+    box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+  }
+
+
+  .cta-button {
+    display: inline-block;
+    margin-top: 5px;
+    padding: 1em 2em;
+    background: #333;
+    color: white;
+    text-decoration: none;
+    border-radius: 5px;
+  }
+
+  /* Card Styles */
+  .card {
+border: 1px solid #ddd;
+border-radius: 8px;
+overflow: hidden;
+margin: 1em;
+box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+display: flex;
+flex-direction: column;
+align-items: center;
+justify-content: center;
+}
+
+  /* Trend Section Styles */
+  .trend-section {
+    text-align: center;
+    padding: 2em;
+    background: #f9f9f9;
+  }
+
+  .trend-chart {
+    max-width: 600px;
+    margin: 2em auto;
+  }
+
+  .card-grid {
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    gap: 1em;
+  }
+  .card img {
+    width: 100px;
+    height: 100px;
+    margin-bottom: 1em;
+  }
+#overall-table {
+    width: 100%;
+    border-collapse: collapse;
+    margin-top: 20px;
+  }
+
+  #overall-table th,
+  #overall-table td {
+    border: 1px solid #ddd;
+    padding: 8px;
+    text-align: left;
+  }
+
+  #overall-table th {
+    background-color: #f2f2f2;
+  }
+
+  #overall-table tbody tr:hover {
+    background-color: #f5f5f5;
+  }

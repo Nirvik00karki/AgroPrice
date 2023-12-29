@@ -1,0 +1,61 @@
+
+#views.py
+def user_login(request):
+    if request.method == 'POST':
+        username = request.POST.get('username')
+        password = request.POST.get('password')
+        user = authenticate(request, username=username, password=password)
+        if user is not None:
+            login(request, user)
+            return redirect('home')
+        else:
+            messages.error(request, 'Invalid username or password')
+
+    return redirect('account') #login page
+
+def register(request):
+    if request.method == 'POST':
+        username = request.POST.get('username')
+        email = request.POST.get('email')
+        password = request.POST.get('password')
+
+        CustomUser.objects.create_user(username=username, email=email, password=password)
+
+        return redirect('login') #login page 
+    else:
+        return render(request, 'account.html') #register page
+
+
+def user_logout(request):
+    logout(request)
+    return redirect('index') 
+
+#models.py
+
+class CustomUser(AbstractUser):
+    username = models.CharField(max_length=150, unique=True)
+    email = models.EmailField(unique=True)
+    #yo talako chai kaile kai error dekhaucha migrate garda tei bhayera halnu parcha. Ekchoti nahali gara,error ayo bhane yo hala
+    groups = models.ManyToManyField(
+        'auth.Group',
+        related_name='custom_user_groups',
+        related_query_name='user',
+        blank=True,
+        help_text='The groups this user belongs to. A user will get all permissions granted to each of their groups.',
+        verbose_name='groups',
+    )
+        user_permissions = models.ManyToManyField(
+        'auth.Permission',
+        related_name='custom_user_permissions',
+        related_query_name='user',
+        blank=True,
+        help_text='Specific permissions for this user.',
+        verbose_name='user permissions',
+    )
+
+
+#urls.py
+    path('login/', views.user_login, name='login'),
+    path('register/', views.register, name='register'),
+    path('logout/', views.user_logout, name='logout'),
+

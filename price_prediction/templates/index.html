@@ -1,0 +1,78 @@
+{% load static %}
+<html lang="en">
+<head>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link rel="preconnect" href="https://fonts.googleapis.com" >
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+   <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@fortawesome/fontawesome-free@6.2.1/css/fontawesome.min.css" integrity="sha384-QYIZto+st3yW+o8+5OHfT6S482Zsvz2WfOzpFSXMF9zqeLcFV0/wlZpMtyFcZALm" crossorigin="anonymous">
+</head>
+<body>
+    <div class="header">
+        {% include 'navbar.html' %}
+     <div class="container">
+
+        <div class="row">
+            <div class="col-2">
+                <h1>Agro Price</h1><br>
+                <p>Vegetable Price Prediction System.</p>
+                <a href="" class="btn">Explore Now &#8594;</a>
+            </div>    
+            <div class="col-2">
+                <img src="{% static 'price_prediction/images/vege.png' %}" >
+            </div>  
+        </div>
+    </div>
+</div>
+
+
+
+<!--Footer-->
+<div class="footer">
+    <div class="container">
+        <div class="row">
+            </div>
+            <div class="footer-col-2">
+               <img src="{% static 'price_prediction/images/vegetables1.png' %}">
+                <p>Our purpose is to help you for vegetable price prediction.</p>
+            </div>
+            <div class="footer-col-3">
+                <h3> Useful Links</h3>
+              <ul>
+                <li>Join Affiliate</li>
+              </ul>
+            </div>
+            <div class="footer-col-4">
+                <h3> Follow us</h3>
+              <ul>
+                <li> Facebook</li>
+                <li>Instagram</li>
+                <li> You Tube</li>
+                <li>Twitter</li>
+              </ul>
+            </div>
+        </div>
+        <hr>
+        <p class="copyright">Copyright 2024 - AgroPrice</p>
+    </div>
+</div>
+<!--Js for toggle menu-->
+<script>
+    var MenuItems = document.getElementById("MenuItems");
+    MenuItems.style.maxHeight = "0px";
+    function menutoggle(){
+        if(MenuItems.style.maxHeight == "0px")
+        {
+            MenuItems.style.maxHeight = "200px"
+        }
+        else
+        {
+            MenuItems.style.maxHeight = "0px"
+        }
+    }
+</script>
+</body>
+</html>
