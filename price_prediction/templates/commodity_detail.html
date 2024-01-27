@@ -1,63 +1,134 @@
-{% load static %}
-<html lang="en">
-<head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Commodity Detail</title>
-    <!-- Add your CSS imports and other head content here -->
-    <link rel="stylesheet" href="{% static 'price_prediction/commodity_detail.css' %}">
-</head>
-<body>
-    <header>
-        {% include 'navbar.html' %}
-    </header>
-
-    <section>
-        <div class="commodity-detail">
-            <div class="commodity-image">
-                <img src="{% static 'price_prediction/images/comd2.png' %}" alt="Commodity Image">
-            </div>
-            <div class="commodity-info">
-                <h2>Tomato</h2>
-                <p>This is the info for tomatoes.</p>
-            </div>
-        </div>
-    </section>
-
-    <!-- Section for displaying graphs -->
-    <section class="graphs">
-        <h2>Price Trends Graph</h2>
-        <div class="graph-container">
-            <!-- Add your graph or chart rendering code here -->
-            <!-- Example: -->
-            <img src="{% static 'price_prediction/images/bar1.png' %}" alt="Price Trends Graph">
-        </div>
-    </section>
+    {% load static %}
+    <html lang="en">
+    <head>
+        <meta charset="UTF-8" />
+        <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+        <title>AgroPrice</title>
+        <link rel="stylesheet" href="{% static 'price_prediction/commodity_detail.css' %}" />
+        <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css">
+        <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/flatpickr/dist/flatpickr.min.css">
+        <link rel="icon" href="{% static 'price_prediction/images/favicon.png' %}" type="image/png">
+        <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;700&display=swap">
+    </head>
+    <body class="bg-custom">
+        <header>{% include 'navbar.html' %}</header>
     
+        <div class="container text-center p-5">
+            <!-- <img src="{% static 'price_prediction/images/logo.png' %}" alt="Logo" class="logo mb-4"> -->
+            <h1>AgroPrice</h1>
+            <p class="text-muted mb-4">Explore the financial horizons of Kathmandu's vital agricultural hub with AgroPrice. Dive into a technological ensemble of rich historical data and acute machine learning precision, crafting not only a forecast but a tangible guide through the ebbs and flows of the Kalimati market's future prices.</p>
+    
+            <form id="predictForm" class="predict-card mx-auto bg-light p-4 rounded shadow-sm" style="max-width: 400px;">
+                <div class="mb-3">
+                    <label for="commodity" class="form-label">Select Commodity:</label>
+                    <select id="commodity" required></select>
+                    <div class="invalid-feedback">Commodity is required.</div>
+                </div>
+    
+                <div class="mb-3">
+                    <label for="date" class="form-label">Select Date:</label>
+                    <input type="date" id="date" required />
+                    <div class="invalid-feedback">Date is required.</div>
+                </div>
+    
+                <div class="d-flex justify-content-between">
+                    <button type="button" onclick="predictAveragePrice()" class="btn btn-success">Predict</button>
+                </div>
+            </form>
+        </div>
 
-    <section>
-        <h1>Commodity Details</h1>
-    <div id="predicted-price-container">
-        <p>Predicted Price: <span id="predicted-price"></span></p>
-    </div>
+      <script>
+        // Populate commodity dropdown on page load
+        window.onload = function () {
+          const commodityDropdown = document.getElementById("commodity");
 
-    <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.5.1/jquery.min.js"></script>
-    <script>
-        $(document).ready(function () {
-            $.ajax({
-                url: '/train_model/',
-                method: 'GET',
-                success: function (response) {
-                    // Update the HTML with the predicted price
-                    $('#predicted-price').text(response.PredictedPriceNextWeek);
-                },
-                error: function (error) {
-                    console.error('Error fetching predicted price:', error);
-                }
+          fetch("/get_commodities/")
+            .then((response) => response.json())
+            .then((data) => {
+              data.forEach((commodity) => {
+                const option = document.createElement("option");
+                option.value = commodity;
+                option.textContent = commodity;
+                commodityDropdown.appendChild(option);
+              });
+            })
+            .catch((error) => {
+              console.error("Error:", error);
             });
-        });
-    </script>
-    </section>
+        };
 
-</body>
+        function predictAveragePrice() {
+          const date = document.getElementById("date").value;
+          selectedCommodities = Array.from(
+            document.getElementById("commodity").selectedOptions
+          ).map((option) => option.value);
+
+          // Check if at least one commodity is selected
+          if (selectedCommodities.length === 0) {
+            console.error("Error: No commodity selected");
+            return;
+          }
+
+          // Make AJAX request to Django backend to get commodity data
+          fetch(`/get_commodity_data/${JSON.stringify(selectedCommodities)}/`)
+            .then((response) => response.json())
+            .then((data) => {
+              // Process data and perform prediction for each commodity
+              Object.entries(data.commodity_data).forEach(
+                ([commodity, commodityData]) => {
+                  const input_data = {
+                    date: date,
+                    commodity: commodity,
+                    commodity_data: commodityData.average_price,
+                  };
+
+                  // Make another AJAX request to Django backend for prediction
+                  fetch("/api/predict/", {
+                    method: "POST",
+                    headers: {
+                      "Content-Type": "application/json",
+                      "X-CSRFToken": "{{ csrf_token }}",
+                    },
+                    body: JSON.stringify(input_data),
+                  })
+                    .then((response) => {
+                      // Check if the response is HTML
+                      if (
+                        response.headers
+                          .get("content-type")
+                          .includes("text/html")
+                      ) {
+                        // Handle HTML response
+                        return response.text();
+                      } else {
+                        // Parse JSON response
+                        return response.json();
+                      }
+                    })
+                    .then((data) => {
+                      // Check if data is a string (HTML response)
+                      if (typeof data === "string") {
+                        // Assuming data is HTML content, you can update the DOM or handle it accordingly
+                        document.body.innerHTML = data;
+                      } else {
+                        // Extract the predicted price from the response
+                        const predictedPrice = data.predicted_price;
+                        setTimeout(() => {
+                          window.location.href = `/result/${commodity}/${predictedPrice}/`;
+                          }, 6000);
+                      }
+                    })
+                    .catch((error) => {
+                      console.error(`Error for ${commodity}:`, error);
+                    });
+                }
+              );
+            })
+            .catch((error) => {
+              console.error("Error:", error);
+            });
+        }
+      </script>
+    </section>
+  </body>
 </html>

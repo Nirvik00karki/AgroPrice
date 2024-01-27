@@ -34,7 +34,7 @@
         </div>
     </section>
     
-
+<!-- 
     <section>
         <h1>Commodity Details</h1>
     <div id="predicted-price-container">
@@ -58,7 +58,44 @@
             });
         });
     </script>
-    </section>
-
+    </section> -->
+    <section>
+        <h1>Price Prediction</h1>
+        <label for="selected_date">Select Date:</label>
+        <input type="date" id="selected_date"><br><br>
+        <button onclick="predictPrice()">Predict</button><br><br>
+        <p id="predicted_price"></p>
+    
+        <script>
+            function predictPrice() {
+                const selectedDate = document.getElementById("selected_date").value;
+    
+                fetch('/api/train_model/', {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json'
+                    },
+                    body: JSON.stringify({
+                        selected_date: selectedDate
+                    })
+                })
+                .then(response => {
+                    if (!response.ok) {
+                        throw new Error('Network response was not ok.');
+                    }
+                    return response.json();
+                })
+                .then(data => {
+                    const predictedPrices = data.predicted_prices;
+                    const formattedPrices = predictedPrices.map(item => `${item.Commodity}: ${item.Date} - ${item.PredictedPrice}`);
+                    document.getElementById("predicted_price").innerText = `Predicted Prices: ${formattedPrices.join(', ')}`;
+                })
+                .catch(error => {
+                    console.error('Error:', error);
+                    document.getElementById("predicted_price").innerText = 'Error occurred while fetching data.';
+                });
+            }
+        </script>
+    </section>    
 </body>
 </html>

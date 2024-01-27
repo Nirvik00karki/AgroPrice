@@ -1,0 +1,126 @@
+{% load static %}
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Analysis - {{ commodity }}</title>
+    <link
+      rel="stylesheet"
+      href="{% static 'price_prediction/analysis.css' %}"
+    />
+  </head>
+
+  <body>
+    {% include 'navbar.html' %}
+
+    <div class="analysis-container">
+      <div class="dropdown-container">
+        <div class="dropdown">
+          <label for="commodity">Select Commodity:</label>
+          <select id="commodity"></select>
+        </div>
+        <button class="button" onclick="loadAnalysis()">Load Analysis</button>
+      </div>
+
+      <h2>Analysis for <span id="selected-commodity">{{ commodity }}</span></h2>
+
+      <div
+        class="plot-container"
+        id="actual-vs-predicted-container"
+      >
+        <h3>Actual vs Predicted Prices</h3>
+        <div id="actual-vs-predicted-plot"></div>
+      </div>
+
+      <div class="plot-container" id="seasons-container">
+        <h3></h3>
+        <div id="seasons-plot"></div>
+      </div>
+
+      <div
+        class="plot-container"
+        id="festivals-container"
+      >
+        <h3></h3>
+        <div id="festivals-plot"></div>
+      </div>
+    </div>
+
+    <script>
+      window.onload = function () {
+        const commodityDropdown = document.getElementById("commodity");
+
+        fetch("/get_commodities/")
+          .then((response) => response.json())
+          .then((data) => {
+            data.forEach((commodity) => {
+              const option = document.createElement("option");
+              option.value = commodity;
+              option.textContent = commodity;
+              commodityDropdown.appendChild(option);
+            });
+          })
+          .catch((error) => {
+            console.error("Error:", error);
+          });
+      };
+
+      function loadAnalysis() {
+        const selectedCommodity = document.getElementById("commodity").value;
+
+        // Now call the /api/analyze/ endpoint
+        fetch("/api/analyze/", {
+          method: "POST",
+          headers: {
+            "Content-Type": "application/json",
+            "X-CSRFToken": "{{ csrf_token }}",
+          },
+          body: JSON.stringify({
+            commodity: selectedCommodity,
+          }),
+        })
+          .then((response) => response.json())
+          .then((context) => {
+            // Log or use the context data as needed
+            console.log("Context Data:", context);
+
+            // Access the commodity value from the context
+            const commodityValue = context.commodity;
+            console.log("Commodity Value:", commodityValue);
+
+            document.getElementById("selected-commodity").textContent =
+              commodityValue;
+
+            // Display the plots
+            displayPlot(
+              "actual-vs-predicted-container",
+              "actual-vs-predicted-plot",
+              context.actual_vs_predicted_base64
+            );
+            displayPlot(
+              "seasons-container",
+              "seasons-plot",
+              context.seasons_base64
+            );
+            displayPlot(
+              "festivals-container",
+              "festivals-plot",
+              context.festivals_base64
+            );
+          })
+          .catch((error) => {
+            console.error("Error fetching data:", error);
+          });
+      }
+
+      function displayPlot(containerId, plotId, base64Image) {
+        const container = document.getElementById(containerId);
+        container.style.display = "block"; 
+
+        const plotContainer = document.getElementById(plotId);
+        plotContainer.innerHTML = `<img src="data:image/png;base64,${base64Image}" alt="${plotId}">`;
+      }
+    </script>
+  </body>
+</html>

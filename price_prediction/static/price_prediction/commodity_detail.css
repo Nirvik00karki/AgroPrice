@@ -1,5 +1,4 @@
-/* commodity_detail.css */
-body {
+/* body {
     font-family: "Arial", sans-serif;
     margin: 0;
     padding: 0;
@@ -14,7 +13,6 @@ section {
     box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
 }
 
-/* Adjust other styles as needed for commodity details */
 .commodity-detail {
     display: flex;
     align-items: center;
@@ -23,7 +21,7 @@ section {
 .commodity-image img {
     max-width: 100%;
     height: auto;
-    margin-right: 20px; /* Adjust spacing between image and info */
+    margin-right: 20px;
 }
 
 .commodity-info h2 {
@@ -32,5 +30,67 @@ section {
 
 .commodity-info p {
     margin-bottom: 20px;
+} */
+
+/* Custom CSS for AgroPrice */
+body.bg-custom {
+    font-family: 'Poppins', sans-serif;
+    background-color: #f8f8f8;
+    margin: 0;
+    padding: 0;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
 }
-/* Add more styles as per your requirement */
+
+h1 {
+    color: #333;
+    font-size: 24px;
+}
+
+.container {
+    max-width: 500px;
+}
+
+.logo {
+    width: 120px;
+}
+
+.predict-card {
+    background-color: #fff;
+    padding: 20px;
+    border-radius: 8px;
+    box-shadow: 0px 4px 6px rgba(0, 0, 0, 0.1);
+}
+
+p.text-muted {
+    color: #6c757d !important;
+    font-size: 0.9rem;
+}
+
+.btn {
+    width: 120px;
+}
+
+/* Optional: Style for form input */
+.form-label {
+    font-weight: bold;
+    color: #333;
+}
+
+/* Optional: Style for form feedback messages */
+.invalid-feedback {
+    color: #dc3545;
+}
+
+/* Optional: Adjustments for smaller screens */
+@media (max-width: 768px) {
+    p {
+        font-size: 14px;
+    }
+
+    .btn {
+        font-size: 12px;
+        padding: 6px 12px;
+    }
+}

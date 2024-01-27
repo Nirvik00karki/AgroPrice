@@ -12,7 +12,12 @@ BASE_DIR = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
 SECRET_KEY = 'django-insecure-%qr)^zx3jod=-+00l4ohb0lt)0#r_%byiz1!idt)7&h)l9_7)#'
 
 # SECURITY WARNING: don't run with debug turned on in production!
+MEDIA_URL = '/media/'
+MEDIA_ROOT = os.path.join(BASE_DIR, 'media')
+
 DEBUG = True
+# if DEBUG:
+#     urlpatterns += static(settings.MEDIA_URL, document_root=settings.MEDIA_ROOT)
 
 ALLOWED_HOSTS = []
 
@@ -67,12 +72,8 @@ WSGI_APPLICATION = 'AgroPrice.wsgi.application'
 
 DATABASES = {
     'default': {
-        'ENGINE': 'django.db.backends.mysql',
-        'NAME': 'agroprice',
-        'USER': 'Agroprice',
-        'PASSWORD': 'agroprice',
-        'HOST': 'localhost',
-        'PORT': '3306',
+        'ENGINE': 'django.db.backends.sqlite3',
+        'NAME': os.path.join(BASE_DIR, "db.sqlite3"),
     }
 }
 

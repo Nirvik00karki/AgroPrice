@@ -1,141 +1,108 @@
-{% load static %}
+<!-- {% load static %}
 <html lang="en">
   <head>
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <title>Fruit & Vegetable Price Prediction</title>
     <link rel="stylesheet" href="{% static 'price_prediction/dashboard.css' %}"/>
-  </head>
+  </head> -->
+{% load static %}
 
-  <body>
-    <header>
-      {% include "navbar.html" %}
-
-    </header>
-
-    <section>
-      <h2>Welcome to our Price Prediction System!</h2>
-      <p>
-        Make informed decisions with our accurate predictions of fruit and
-        vegetable prices. Whether you're a farmer, seller, or consumer, our
-        system provides valuable insights for your needs.
-      </p>
-      <p>
-        Get started now and experience the power of data-driven predictions.
-      </p>
-      <a href="#commodities" class="cta-button">Explore Commodities</a>
-    </section>
-
-    <section id="commodities">
-      <h2>Featured Commodities</h2>
-      <div class="card-grid">
-        <div class="card">
-          <a href="/potato/">
-          <img src="{% static 'price_prediction/images/comd1.png' %}" alt="Potato" />
-          <h3>Potato</h3>
-          </a>
+    <!DOCTYPE html>
+    <html lang="en">
+    
+    <head>
+        <meta charset="UTF-8">
+        <meta name="viewport" content="width=device-width, initial-scale=1.0">
+        <title>AgroPrice</title>
+        <link rel="stylesheet" href="{% static 'price_prediction/dashboard.css' %}" />
+        <!-- Bootstrap CSS -->
+        <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+        <!-- Font Awesome CSS -->
+        <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.1/css/all.min.css">
+    </head>
+    
+    <body class="d-flex flex-column h-100">
+        <header>
+          {% include "navbar.html" %} 
+        </header>
+        <div class="container-fluid p-2 text-center d-flex flex-column justify-content-center align-items-center h-200">
+          <!-- <img src="{% static 'price_prediction/images/vegetables1.png' %}" id="logo" alt="Logo" class="logo mb-4"> -->
+          <h1 class="mb-4">AgroPrice</h1>
+          <p class="mb-5 px-lg-5">
+              Explore the financial horizons of Kathmandu's vital agricultural hub with AgroPrice. Dive into a
+              technological ensemble of rich historical data and machine learning precision, crafting not only a
+              forecast but a tangible guide through the ebbs and flows of the Kalimati market's future prices.
+          </p>
+          <div class="d-flex justify-content-center mb-5">
+            <a href="/analysis_view/" class="btn btn-custom m-2">
+                <i class="fas fa-chart-line"></i> Analyze
+            </a>
+              <a href="/home/commodity_detail/" class="btn btn-custom m-2">
+                  <i class="fas fa-rocket"></i> Predict
+              </a>
+          </div>
+          <p class="mb-5 px-lg-5">
+              Click on <b>Analyze</b> to delve into a robust analysis, allowing you to observe and comprehend historical
+              pricing data from the Kalimati Fruits and Vegetables Market. Choose <b>Predict</b> to utilize the intelligent
+              forecasting system to foresee potential future pricing scenarios, enabling you to make informed decisions and
+              anticipate market flux efficiently.
+          </p>
+    
+            <!-- <h2>Price Trends</h2>
+            <div class="trend-chart">
+                <h1>Overall Table</h1>
+                
+                <table id="overall-table" class="table table-bordered">
+                    <thead>
+                        <tr>
+                            <th scope="col"><b>Commodity</b></th>
+                            <th scope="col"><b>Percentage Change</b></th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                      
+                    </tbody>
+                </table>
+            </div> -->
+    
+            <!-- Your existing content goes here -->
+    
+            <p class="developer-credit mt-5">
+                Developed by <a href="https://github.com/..." target="_blank" rel="noopener noreferrer">....</a>
+            </p>
         </div>
-
-        <div class="card">
-          <a href="/home/commodity_detail/">
-          <img src="{% static 'price_prediction/images/comd2.png' %}" alt="Tomato" id="comdimg" />
-          <h3>Tomato</h3>
-          </a>
-        </div>
-
-        <div class="card">
-          <a href="/home/commodity_detail/">
-          <img src="{% static 'price_prediction/images/comd3.png' %}" alt="Carrot" id="commodity-image" />
-          <h3>Carrot</h3>
-          </a>
-        </div>
-	
-
-        <div class="card">
-          <a href="/home/commodity_detail/">
-          <img src="{% static 'price_prediction/images/comd4.png' %}" alt="" id="commodity-image"/>
-          <h3>Lettuce</h3>
-          </a>
-        </div>
-
-        <div class="card">
-          <a href="/home/commodity_detail/">
-          <img src="{% static 'price_prediction/images/comd5.png' %}" alt="" id="commodity-image"/>
-          <h3>Onion</h3>
-          </a>
-        </div>
-	
-        <div class="card">
-          <a href="/home/commodity_detail/">
-          <img src="{% static 'price_prediction/images/comd6.png' %}" alt="" id="commodity-image"/>
-          <h3>Garlic</h3>
-          </a>
-        </div>
-
-        </div>
-    </section>
-    <section id="trends" class="trend-section">
-      <h2>Price Trends</h2>
-      <div class="trend-chart">
-        <h1>Overall Table</h1>
-
-        <table id="overall-table">
-          <!-- Table content will be inserted here -->
-        </table>
+    
+        <script src="https://cdn.jsdelivr.net/npm/@popperjs/core@2.11.6/dist/umd/popper.min.js"></script>
+        <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.min.js"></script>
+        
         <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
         <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.5.1/jquery.min.js"></script>
         <script>
-          // Fetch data from Django API endpoint
-          fetch("/api/serve_overall_table/")
-            .then((response) => response.json())
-            .then((data) => {
-              // Handle the data and update the table
-              updateTable(data);
-            })
-            .catch((error) => console.error("Error:", error));
-
-          // Function to update the HTML table
-          function updateTable(data) {
-            const table = document.getElementById("overall-table");
-            // Clear existing content
-            table.innerHTML = "";
-
-            // Add header row
-            const headerRow = table.insertRow();
-            const commodityHeader = headerRow.insertCell(0);
-            const percentageChangeHeader = headerRow.insertCell(1);
-            commodityHeader.innerHTML = "<b>Commodity</b>";
-            percentageChangeHeader.innerHTML = "<b>Percentage Change</b>";
-
-            // Add data rows
-            data.forEach((entry) => {
-              const row = table.insertRow();
-              const commodityCell = row.insertCell(0);
-              const percentageChangeCell = row.insertCell(1);
-              commodityCell.innerHTML = entry["Commodity"];
-              percentageChangeCell.innerHTML = entry["Percentage Change"];
-            });
-          }
-          //   $(document).ready(function () {
-          //     $('.comdimg').click(function () {
-          //         var commodityId = $(this).attr('id'); // Assuming the ID corresponds to the commodity ID
-          //         $.ajax({
-          //             url: '/get_predicted_price/',
-          //             method: 'GET',
-          //             data: {
-          //                 commodity_id: commodityId
-          //             },
-          //             success: function (response) {
-          //                 window.location.href = `/home/commodity_detail/?predicted_price=${response.PredictedPriceNextWeek}`;
-          //             },
-          //             error: function (error) {
-          //                 console.error('Error fetching predicted price:', error);
-          //             }
-          //         });
-          //     });
-          // });
-
+            fetch("/api/serve_overall_table/")
+                .then((response) => response.json())
+                .then((data) => {
+                    updateTable(data);
+                })
+                .catch((error) => console.error("Error:", error));
+    
+            function updateTable(data) {
+                const table = document.getElementById("overall-table").getElementsByTagName('tbody')[0];
+                table.innerHTML = ""; // Clear existing content
+    
+                data.forEach((entry) => {
+                    const row = table.insertRow();
+                    const commodityCell = row.insertCell(0);
+                    const percentageChangeCell = row.insertCell(1);
+                    commodityCell.innerHTML = entry["Commodity"];
+                    percentageChangeCell.innerHTML = entry["Percentage Change"];
+                });
+            }
         </script>
+    </body>
+    
+    </html>
+    
       </div>
     </section>
   </body>
