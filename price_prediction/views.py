@@ -439,76 +439,76 @@ def analysis_fig(request):
         if not selected_commodity:
             return JsonResponse({'error': 'No commodity selected'})
 
-        df = pd.read_csv(r'C:\Users\nirvi\OneDrive\Desktop\Programs\Mlcurrent\first_merged_1.csv')
-        df1 = df[df['Commodity'] == selected_commodity]
-        if df1.empty:
-            return JsonResponse({'error': f'No data found for {selected_commodity}'})
+        # df = pd.read_csv(r'C:\Users\nirvi\OneDrive\Desktop\Programs\Mlcurrent\first_merged_1.csv')
+        # df1 = df[df['Commodity'] == selected_commodity]
+        # if df1.empty:
+        #     return JsonResponse({'error': f'No data found for {selected_commodity}'})
 
-        df1['Date'] = pd.to_datetime(df1['Date'])
+        # df1['Date'] = pd.to_datetime(df1['Date'])
 
-        df1 = df1.sort_values('Date')
-        df1 = df1[(df1['Date'] < '2020-01-01') | (df1['Date'] >= '2021-01-01')]
-        latest_months = 6
+        # df1 = df1.sort_values('Date')
+        # df1 = df1[(df1['Date'] < '2020-01-01') | (df1['Date'] >= '2021-01-01')]
+        # latest_months = 6
 
-        latest_date = df1['Date'].max()
-        earliest_date = latest_date - pd.DateOffset(months=latest_months)
+        # latest_date = df1['Date'].max()
+        # earliest_date = latest_date - pd.DateOffset(months=latest_months)
 
-        train_data = df1[df1['Date'] < earliest_date]
-        test_data = df1[df1['Date'] >= earliest_date]
+        # train_data = df1[df1['Date'] < earliest_date]
+        # test_data = df1[df1['Date'] >= earliest_date]
 
-        x_train = train_data.drop(['Average', 'Commodity', 'Date'], axis=1)  # Assuming 'Average' is the target variable
-        y_train = train_data['Average']
-        x_test = test_data.drop(['Average', 'Commodity', 'Date'], axis=1)
-        y_test = test_data['Average']
-        scaler = StandardScaler()
-        x_train_scaled = scaler.fit_transform(x_train)
-        x_test_scaled = scaler.transform(x_test)
+        # x_train = train_data.drop(['Average', 'Commodity', 'Date'], axis=1)  # Assuming 'Average' is the target variable
+        # y_train = train_data['Average']
+        # x_test = test_data.drop(['Average', 'Commodity', 'Date'], axis=1)
+        # y_test = test_data['Average']
+        # scaler = StandardScaler()
+        # x_train_scaled = scaler.fit_transform(x_train)
+        # x_test_scaled = scaler.transform(x_test)
 
-        # Prepare for Ridge Regression (add bias term)
-        X_train = np.c_[np.ones(x_train_scaled.shape[0]), x_train_scaled]
-        X_test = np.c_[np.ones(x_test_scaled.shape[0]), x_test_scaled]
+        # # Prepare for Ridge Regression (add bias term)
+        # X_train = np.c_[np.ones(x_train_scaled.shape[0]), x_train_scaled]
+        # X_test = np.c_[np.ones(x_test_scaled.shape[0]), x_test_scaled]
 
-        # Train the Ridge Regression model
-        coefficients = ridge_regression_fit(X_train, y_train, alpha=1.0)
+        # # Train the Ridge Regression model
+        # coefficients = ridge_regression_fit(X_train, y_train, alpha=1.0)
 
-        # Make predictions
-        y_pred = ridge_regression_predict(coefficients, X_test)
-        predicted_prices = list(np.exp(y_pred))
+        # # Make predictions
+        # y_pred = ridge_regression_predict(coefficients, X_test)
+        # predicted_prices = list(np.exp(y_pred))
 
-        # Filter actual prices for the last 6 months
-        actual_prices_data = df1[df1['Date'] >= earliest_date]
-        actual_prices = list(np.exp(actual_prices_data['Average']))
+        # # Filter actual prices for the last 6 months
+        # actual_prices_data = df1[df1['Date'] >= earliest_date]
+        # actual_prices = list(np.exp(actual_prices_data['Average']))
 
-        # season_columns = ['Season_Fall', 'Season_Spring', 'Season_Summer', 'Season_Winter']
-        # festival_columns = [col for col in df1.columns if 'Festival_' in col and '_near' not in col]
+        # # season_columns = ['Season_Fall', 'Season_Spring', 'Season_Summer', 'Season_Winter']
+        # # festival_columns = [col for col in df1.columns if 'Festival_' in col and '_near' not in col]
 
-        # # Get lag columns related to Seasons and Festivals
-        # lag_season_columns = ['Fall_near','Spring_near','Summer_near','Winter_near']
-        # lag_festival_columns = ['Dashain_near', 'Tihar_near', 'Holi_near', 'Maha Shivaratri_near', 'Buddha Jayanti_near', 'Ghode Jatra_near', 'Teej_near', 'Indra Jatra_near', 'Lhosar_near', 'Janai Purnima_near', 'Gai Jatra_near', 'Maghe Sankranti_near', 'Shree Panchami_near']
+        # # # Get lag columns related to Seasons and Festivals
+        # # lag_season_columns = ['Fall_near','Spring_near','Summer_near','Winter_near']
+        # # lag_festival_columns = ['Dashain_near', 'Tihar_near', 'Holi_near', 'Maha Shivaratri_near', 'Buddha Jayanti_near', 'Ghode Jatra_near', 'Teej_near', 'Indra Jatra_near', 'Lhosar_near', 'Janai Purnima_near', 'Gai Jatra_near', 'Maghe Sankranti_near', 'Shree Panchami_near']
 
-        actual_vs_predicted_buffer = io.BytesIO()
-        trend_buffer = io.BytesIO()
-        # seasons_buffer = io.BytesIO()
-        # festivals_buffer = io.BytesIO()
-        plt.figure(figsize=(24, 6))
-        plt.subplot(1, 3, 1)
-        plt.plot(actual_prices_data['Date'], actual_prices, label='Actual Prices', marker='o')
-        plt.plot(test_data['Date'], predicted_prices, label='Predicted Prices', marker='x')
-        plt.xlabel('Date')
-        plt.ylabel('Price')
-        plt.title(f'Actual vs Predicted Prices - {selected_commodity}')
-        plt.legend()
-        plt.savefig(actual_vs_predicted_buffer, format='png')
-        plt.close()
-        df1['Average'] = np.exp(df1['Average'])
-        plt.figure(figsize=(12, 6))
-        plt.plot(df1['year'], df1['Average'], marker='o', label='Price Trend')
-        plt.xlabel('Year')
-        plt.ylabel('Average Price')
-        plt.title(f'Price Trend of {selected_commodity} Over the Years')
-        plt.legend()
-        plt.savefig(trend_buffer, format='png')
-        plt.close()
+        # actual_vs_predicted_buffer = io.BytesIO()
+        # trend_buffer = io.BytesIO()
+        # # seasons_buffer = io.BytesIO()
+        # # festivals_buffer = io.BytesIO()
+        # plt.figure(figsize=(24, 6))
+        # plt.subplot(1, 3, 1)
+        # plt.plot(actual_prices_data['Date'], actual_prices, label='Actual Prices', marker='o')
+        # plt.plot(test_data['Date'], predicted_prices, label='Predicted Prices', marker='x')
+        # plt.xlabel('Date')
+        # plt.ylabel('Price')
+        # plt.title(f'Actual vs Predicted Prices - {selected_commodity}')
+        # plt.legend()
+        # plt.savefig(actual_vs_predicted_buffer, format='png')
+        # plt.close()
+        # df1['Average'] = np.exp(df1['Average'])
+        # plt.figure(figsize=(12, 6))
+        # plt.plot(df1['year'], df1['Average'], marker='o', label='Price Trend')
+        # plt.xlabel('Year')
+        # plt.ylabel('Average Price')
+        # plt.title(f'Price Trend of {selected_commodity} Over the Years')
+        # plt.legend()
+        # plt.savefig(trend_buffer, format='png')
+        # plt.close()
         # Plot Price changes with Seasons and their lag features
         # plt.figure(figsize=(22, 8))
         # plt.subplot(1, 3, 2)
@@ -543,22 +543,47 @@ def analysis_fig(request):
         # plt.savefig(festivals_path, format='png')
 
         # plt.close()
-        actual_vs_predicted_base64 = base64.b64encode(actual_vs_predicted_buffer.getvalue()).decode('utf-8')
-        trend_base64 = base64.b64encode(trend_buffer.getvalue()).decode('utf-8')
+        # actual_vs_predicted_base64 = base64.b64encode(actual_vs_predicted_buffer.getvalue()).decode('utf-8')
+        # trend_base64 = base64.b64encode(trend_buffer.getvalue()).decode('utf-8')
 
         # seasons_base64 = base64.b64encode(seasons_buffer.getvalue()).decode('utf-8')
         # festivals_base64 = base64.b64encode(festivals_buffer.getvalue()).decode('utf-8')
         context = {
-            'actual_prices': actual_prices,
-            'predicted_prices': predicted_prices,
+            # 'actual_prices': actual_prices,
+            # 'predicted_prices': predicted_prices,
             'commodity' : selected_commodity,
-            'actual_vs_predicted_base64': actual_vs_predicted_base64,
-            'trend_base64' : trend_base64,
+            # 'actual_vs_predicted_base64': actual_vs_predicted_base64,
+            # 'trend_base64' : trend_base64,
             # 'seasons_base64': seasons_base64,
             # 'festivals_base64': festivals_base64,
 
         }
 
+        return JsonResponse(context)
+    else:
+        return JsonResponse({'error': 'Invalid request method'})
+
+def generate_chart(request):
+    if request.method == 'POST':
+        data = json.loads(request.body.decode('utf-8'))
+        selected_commodity = data.get('commodity')
+        if not selected_commodity:
+            return JsonResponse({'error': 'No commodity selected'})
+
+        df = pd.read_csv(r'C:\Users\nirvi\OneDrive\Desktop\Programs\Mlcurrent\forchart.csv')
+        df1 = df[df['Commodity'] == selected_commodity]
+        if df1.empty:
+            return JsonResponse({'error': f'No data found for {selected_commodity}'})
+        df1['Date'] = pd.to_datetime(df1['Date'])
+        df1['Average'] = np.exp(df1['Average'])
+        df_2023_2024 = df1[(df1['Date'].dt.year == 2023) | (df1['Date'].dt.year == 2024)]
+        seasons = df_2023_2024['Season'].tolist()
+        averages = df_2023_2024['Average'].tolist()
+        dates = df_2023_2024['Date'].tolist()
+        years = df1['year'].tolist()
+        yearAverages = df1['Average'].tolist()
+        
+        context = {'seasons': seasons, 'averages': averages, 'dates': dates, 'years': years, 'yearAverages': yearAverages }
         return JsonResponse(context)
     else:
         return JsonResponse({'error': 'Invalid request method'})

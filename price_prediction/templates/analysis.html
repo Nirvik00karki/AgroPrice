@@ -5,10 +5,17 @@
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <title>Analysis - {{ commodity }}</title>
-    <link
-      rel="stylesheet"
-      href="{% static 'price_prediction/analysis.css' %}"
-    />
+    <link rel="stylesheet" href="{% static 'price_prediction/analysis.css' %}"/>
+    <style>
+      .analysis-container {
+        max-width: 1000px;
+        margin: 20px auto;
+        background-color: white;
+        padding: 20px;
+        border-radius: 8px;
+        box-shadow: 0 0 10px rgba(0, 0, 0, 0.1); /* Box shadow for a subtle elevation effect */
+      }
+    </style>
   </head>
 
   <body>
@@ -23,30 +30,28 @@
         <button class="button" onclick="loadAnalysis()">Load Analysis</button>
       </div>
 
-      <h2>Analysis for <span id="selected-commodity">{{ commodity }}</span></h2>
+      <h2 id="analysis-header">
+        Analysis for <span id="selected-commodity">{{ commodity }}</span>
+      </h2>
 
-      <div
-        class="plot-container"
-        id="actual-vs-predicted-container"
-      >
-        <h3>Actual vs Predicted Prices</h3>
+      <!-- <div class="plot-container" id="actual-vs-predicted-container"> -->
+      <!-- <h3>Actual vs Predicted Prices</h3>
         <div id="actual-vs-predicted-plot"></div>
       </div>
 
       <div class="plot-container" id="seasons-container">
         <h3></h3>
-        <div id="seasons-plot"></div>
+        <div id="seasons-plot"></div> -->
+      <div class="plot-container" id="average-seasons-container">
+        <h3 id="chartheader1">Average Price Over 2022 and 2024</h3>
+        <canvas id="average-seasons-plot"></canvas>
       </div>
-
-      <!-- <div
-        class="plot-container"
-        id="festivals-container"
-      >
-        <h3></h3>
-        <div id="festivals-plot"></div>
-      </div> -->
+      <div class="plot-container" id="average-year-container">
+        <h3 id="chartheader2">Price of the commodity over the years</h3>
+        <canvas id="average-year-plot"></canvas>
+      </div>
     </div>
-
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
     <script>
       window.onload = function () {
         const commodityDropdown = document.getElementById("commodity");
@@ -68,6 +73,9 @@
 
       function loadAnalysis() {
         const selectedCommodity = document.getElementById("commodity").value;
+        document.getElementById("analysis-header").style.display = "block";
+        document.getElementById("chartheader1").style.display = "block";
+        document.getElementById("chartheader2").style.display = "block";
 
         // Now call the /api/analyze/ endpoint
         fetch("/api/analyze/", {
@@ -93,33 +101,138 @@
               commodityValue;
 
             // Display the plots
-            displayPlot(
-              "actual-vs-predicted-container",
-              "actual-vs-predicted-plot",
-              context.actual_vs_predicted_base64
-            );
-            displayPlot(
-              "seasons-container",
-              "seasons-plot",
-              context.trend_base64
-            );
             // displayPlot(
-            //   "festivals-container",
-            //   "festivals-plot",
-            //   context.festivals_base64
+            //   "actual-vs-predicted-container",
+            //   "actual-vs-predicted-plot",
+            //   context.actual_vs_predicted_base64
             // );
+            // displayPlot(
+            //   "seasons-container",
+            //   "seasons-plot",
+            //   context.trend_base64
+            // );
+            fetch("/generate_chart/", {
+              method: "POST",
+              headers: {
+                "Content-Type": "application/json",
+                "X-CSRFToken": "{{ csrf_token }}",
+              },
+              body: JSON.stringify({
+                commodity: selectedCommodity,
+              }),
+            })
+              .then((response) => response.json())
+              .then((chartData) => {
+                // Log or use the chartData as needed
+                console.log("Chart Data:", chartData);
+
+                // Call a function to generate the interactive chart using chartData
+                generateInteractiveChart(chartData);
+              })
+              .catch((error) => {
+                console.error("Error fetching chart data:", error);
+              });
           })
           .catch((error) => {
             console.error("Error fetching data:", error);
           });
       }
 
-      function displayPlot(containerId, plotId, base64Image) {
-        const container = document.getElementById(containerId);
-        container.style.display = "block"; 
+      // function displayPlot(containerId, plotId, base64Image) {
+      //   const container = document.getElementById(containerId);
+      //   container.style.display = "block";
 
-        const plotContainer = document.getElementById(plotId);
-        plotContainer.innerHTML = `<img src="data:image/png;base64,${base64Image}" alt="${plotId}">`;
+      //   const plotContainer = document.getElementById(plotId);
+      //   plotContainer.innerHTML = `<img src="data:image/png;base64,${base64Image}" alt="${plotId}">`;
+      // }
+
+      function generateInteractiveChart(chartData) {
+        // Extract data from the chartData object
+        const seasons = chartData.seasons; // Assuming these are already in a suitable format
+        const averages = chartData.averages; // Assuming these are already in a suitable format
+        const dates = chartData.dates; // Assuming these are already in a suitable format
+        const years = chartData.years; // Assuming these are already in a suitable format
+        const yearAverages = chartData.yearAverages; // Assuming these are already in a suitable format
+
+        // Create a new chart using Chart.js
+        const ctx1 = document
+          .getElementById("average-seasons-plot")
+          .getContext("2d");
+        const chart1 = new Chart(ctx1, {
+          type: "line",
+          data: {
+            labels: seasons,
+            datasets: [
+              {
+                label: "Average Price",
+                data: averages,
+                fill: false,
+                borderColor: "rgba(75, 192, 192, 1)",
+                tension: 0.1,
+              },
+            ],
+          },
+          options: {
+            scales: {
+              y: {
+                beginAtZero: true,
+              },
+            },
+            plugins: {
+              tooltip: {
+                callbacks: {
+                  label: function (context) {
+                    const date = new Date(dates[context.dataIndex]);
+                    const formattedDate = date.toISOString().slice(0, 10);
+                    const averagePrice = parseFloat(context.parsed.y).toFixed(
+                      2
+                    );
+                    return `Date: ${formattedDate}, Average Price: ${averagePrice}`;
+                  },
+                },
+              },
+            },
+          },
+        });
+
+        const ctx2 = document
+          .getElementById("average-year-plot")
+          .getContext("2d");
+        const chart2 = new Chart(ctx2, {
+          type: "line",
+          data: {
+            labels: years,
+            datasets: [
+              {
+                label: "Average Price",
+                data: yearAverages,
+                fill: false,
+                borderColor: "rgba(75, 192, 192, 1)",
+                tension: 0.1,
+              },
+            ],
+          },
+          options: {
+            scales: {
+              y: {
+                beginAtZero: true,
+              },
+            },
+            plugins: {
+              tooltip: {
+                callbacks: {
+                  label: function (context) {
+                    const year = years[context.dataIndex];
+                    const averagePrice = parseFloat(context.parsed.y).toFixed(
+                      2
+                    );
+                    return `Year: ${year}, Average Price: ${averagePrice}`;
+                  },
+                },
+              },
+            },
+          },
+        });
       }
     </script>
   </body>

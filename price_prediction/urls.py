@@ -29,6 +29,7 @@ urlpatterns = [
     path('potato/', views.potato_detail, name='potato'),
     path('api/analyze/', views.analysis_fig, name='analysis_fig'),
     path('analysis_view/', views.analysis_view, name='analysis_view'),
+    path('generate_chart/', views.generate_chart, name='generate_chart'),
     # path('analysis/<str:selected_commodity>/', views.render_analysis, name='render_analysis'),
   ]
 if settings.DEBUG:
