@@ -19,9 +19,11 @@
                         <input type="password" placeholder="Password" name="password">
                         <button type="submit" class="btn">Login</button>
                         <a href="">Forgot Password</a>
+                        {% if user.is_authenticated %}
                         <form method="post" action="/logout/">
                             <button type="submit" class="btn">Log out</button>
                             </form>
+                        {% endif %}
                     </form>
                     <form id="RegForm" method="post" action="{% url 'register' %}">
                         {% csrf_token %}

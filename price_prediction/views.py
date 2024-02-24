@@ -13,7 +13,7 @@ from rest_framework.pagination import PageNumberPagination
 from django.http import JsonResponse
 import pandas as pd
 import numpy as np
-import os
+# import os
 import json
 from django.contrib.auth import authenticate, login, logout
 from django.contrib import messages
@@ -35,11 +35,11 @@ def index(request):
     return render(request, 'index.html')
 
 
-class HistoricalPriceViewSet(viewsets.ModelViewSet):
-    queryset = HistoricalPrice.objects.all()
-    serializer_class = HistoricalPriceSerializer
-    permission_classes = [IsAuthenticated]
-    pagination_class = PageNumberPagination
+# class HistoricalPriceViewSet(viewsets.ModelViewSet):
+#     queryset = HistoricalPrice.objects.all()
+#     serializer_class = HistoricalPriceSerializer
+#     permission_classes = [IsAuthenticated]
+#     pagination_class = PageNumberPagination
 
 def potato_detail(request):
     return render(request, 'potato.html')
@@ -47,10 +47,19 @@ def potato_detail(request):
 def commodity_detail(request):
     return render(request, 'commodity_detail.html')
 
-def serve_overall_table():
-    file_path = os.path.join(r'C:\Final year Project\AgroPrice\price_prediction\static\price_prediction', 'percent.csv')  # Update the path
-    overall_table_data = pd.read_csv(file_path).to_dict(orient='records')
-    return JsonResponse(overall_table_data, safe=False)
+# def serve_overall_table():
+#     file_path = os.path.join(r'C:\Final year Project\AgroPrice\price_prediction\static\price_prediction', 'percent.csv')  # Update the path
+#     overall_table_data = pd.read_csv(file_path).to_dict(orient='records')
+#     return JsonResponse(overall_table_data, safe=False)
+
+def render_price_search(request):
+    return render(request, 'pricesearch.html')
+
+# View function to return the CSV data
+def get_price_data(request):
+    df = pd.read_csv(r'C:\Users\nirvi\OneDrive\Desktop\Programs\Mlcurrent\Kalimati2024.csv')
+    data = df.to_dict(orient='records')
+    return JsonResponse(data, safe=False)
 
 def account(request):
     return render(request, 'account.html')
@@ -86,13 +95,13 @@ def user_logout(request):
     return redirect('index') 
 
 def get_commodities(request):
-    df = pd.read_csv(r'C:\Users\nirvi\OneDrive\Desktop\Programs\Mlcurrent\lagadded_out.csv')
+    df = pd.read_csv(r'C:\Users\nirvi\OneDrive\Desktop\Programs\Mlcurrent\first_merged_1.csv')
     commodities = df['Commodity'].unique().tolist()
     return JsonResponse(commodities, safe=False)
 
 def get_commodity_data(request, commodity_names):
     commodity_names = json.loads(commodity_names)
-    df = pd.read_csv(r'C:\Users\nirvi\OneDrive\Desktop\Programs\Mlcurrent\lagadded_out.csv')
+    df = pd.read_csv(r'C:\Users\nirvi\OneDrive\Desktop\Programs\Mlcurrent\first_merged_1.csv')
 
     selected_data = df[df['Commodity'].isin(commodity_names)]
 
@@ -108,7 +117,7 @@ def get_commodity_data(request, commodity_names):
 
 def search_commodity(request):
     term = request.GET.get('term')
-    df = pd.read_csv(r'C:\Users\nirvi\OneDrive\Desktop\Programs\Mlcurrent\lagadded_out.csv')
+    df = pd.read_csv(r'C:\Users\nirvi\OneDrive\Desktop\Programs\Mlcurrent\first_merged_1.csv')
     search_results = df['Commodity'][df['Commodity'].str.contains(term, case=False)].unique().tolist()
     return JsonResponse(search_results, safe=False)
 
@@ -141,7 +150,7 @@ def predict_average_price(request):
         if not selected_commodity:
             return JsonResponse({'error': 'No commodity selected'})
 
-        df = pd.read_csv(r'C:\Users\nirvi\OneDrive\Desktop\Programs\Mlcurrent\lagadded_out.csv')
+        df = pd.read_csv(r'C:\Users\nirvi\OneDrive\Desktop\Programs\Mlcurrent\first_merged_1.csv')
 
         # Filter data for the selected commodity
         df1 = df[df['Commodity'] == selected_commodity]
@@ -259,6 +268,9 @@ def predict_average_price(request):
             'Summer_near': [0],
             'Winter_near': [0],
             'Average_lag1': [known_lag_value],
+            # 'day_sin': [0],
+            # 'day_cos': [0],
+
         })
 
     previous_date_features = previous_date_features.values.reshape(1, -1)
@@ -320,6 +332,8 @@ def predict_average_price(request):
             'Summer_near': [0],
             'Winter_near': [0],
             'Average_lag1': [previous_date_lag],
+            # 'day_sin': [0],
+            # 'day_cos': [0],
         })
 
         previous_date_features = previous_date_features.values.reshape(1, -1)
@@ -373,7 +387,8 @@ def predict_average_price(request):
             'Summer_near': [0],
             'Winter_near': [0],
             'Average_lag1' : [previous_date_lag],
-            # 'Weighted_Moving_Average' : [0],
+            # 'day_sin': [0],
+            # 'day_cos': [0],
         })
 
         selected_date_features = selected_date_features.values.reshape(1, -1)
@@ -424,7 +439,7 @@ def analysis_fig(request):
         if not selected_commodity:
             return JsonResponse({'error': 'No commodity selected'})
 
-        df = pd.read_csv(r'C:\Users\nirvi\OneDrive\Desktop\Programs\Mlcurrent\lagadded_out.csv')
+        df = pd.read_csv(r'C:\Users\nirvi\OneDrive\Desktop\Programs\Mlcurrent\first_merged_1.csv')
         df1 = df[df['Commodity'] == selected_commodity]
         if df1.empty:
             return JsonResponse({'error': f'No data found for {selected_commodity}'})
@@ -464,17 +479,17 @@ def analysis_fig(request):
         actual_prices_data = df1[df1['Date'] >= earliest_date]
         actual_prices = list(np.exp(actual_prices_data['Average']))
 
-        season_columns = ['Season_Fall', 'Season_Spring', 'Season_Summer', 'Season_Winter']
-        festival_columns = [col for col in df1.columns if 'Festival_' in col and '_near' not in col]
+        # season_columns = ['Season_Fall', 'Season_Spring', 'Season_Summer', 'Season_Winter']
+        # festival_columns = [col for col in df1.columns if 'Festival_' in col and '_near' not in col]
 
-        # Get lag columns related to Seasons and Festivals
-        lag_season_columns = ['Fall_near','Spring_near','Summer_near','Winter_near']
-        lag_festival_columns = ['Dashain_near', 'Tihar_near', 'Holi_near', 'Maha Shivaratri_near', 'Buddha Jayanti_near', 'Ghode Jatra_near', 'Teej_near', 'Indra Jatra_near', 'Lhosar_near', 'Janai Purnima_near', 'Gai Jatra_near', 'Maghe Sankranti_near', 'Shree Panchami_near']
+        # # Get lag columns related to Seasons and Festivals
+        # lag_season_columns = ['Fall_near','Spring_near','Summer_near','Winter_near']
+        # lag_festival_columns = ['Dashain_near', 'Tihar_near', 'Holi_near', 'Maha Shivaratri_near', 'Buddha Jayanti_near', 'Ghode Jatra_near', 'Teej_near', 'Indra Jatra_near', 'Lhosar_near', 'Janai Purnima_near', 'Gai Jatra_near', 'Maghe Sankranti_near', 'Shree Panchami_near']
 
         actual_vs_predicted_buffer = io.BytesIO()
-        seasons_buffer = io.BytesIO()
-        festivals_buffer = io.BytesIO()
-
+        trend_buffer = io.BytesIO()
+        # seasons_buffer = io.BytesIO()
+        # festivals_buffer = io.BytesIO()
         plt.figure(figsize=(24, 6))
         plt.subplot(1, 3, 1)
         plt.plot(actual_prices_data['Date'], actual_prices, label='Actual Prices', marker='o')
@@ -485,31 +500,39 @@ def analysis_fig(request):
         plt.legend()
         plt.savefig(actual_vs_predicted_buffer, format='png')
         plt.close()
-
+        df1['Average'] = np.exp(df1['Average'])
+        plt.figure(figsize=(12, 6))
+        plt.plot(df1['year'], df1['Average'], marker='o', label='Price Trend')
+        plt.xlabel('Year')
+        plt.ylabel('Average Price')
+        plt.title(f'Price Trend of {selected_commodity} Over the Years')
+        plt.legend()
+        plt.savefig(trend_buffer, format='png')
+        plt.close()
         # Plot Price changes with Seasons and their lag features
-        plt.figure(figsize=(22, 8))
-        plt.subplot(1, 3, 2)
-        for season_col, lag_season_col in zip(season_columns, lag_season_columns):
-            avg_prices = df1[df1['Date'].dt.year == 2023][f'{season_col}'] + df1[df1['Date'].dt.year == 2023][lag_season_col]
-            plt.plot(season_col.split('_')[-1], np.mean(avg_prices), alpha=0.7)
+        # plt.figure(figsize=(22, 8))
+        # plt.subplot(1, 3, 2)
+        # for season_col, lag_season_col in zip(season_columns, lag_season_columns):
+        #     avg_prices = df1[df1['Date'].dt.year == 2023][f'{season_col}'] + df1[df1['Date'].dt.year == 2023][lag_season_col]
+        #     plt.plot(season_col.split('_')[-1], np.mean(avg_prices), alpha=0.7)
 
-        plt.xlabel('Season')
-        plt.ylabel('Average Transformed Price')
-        plt.title(f'Average Price changes with Seasons - {selected_commodity}')
-        plt.savefig(seasons_buffer, format='png')
-        plt.close()
+        # plt.xlabel('Season')
+        # plt.ylabel('Average Transformed Price')
+        # plt.title(f'Average Price changes with Seasons - {selected_commodity}')
+        # plt.savefig(seasons_buffer, format='png')
+        # plt.close()
 
-        plt.figure(figsize=(22, 8))
-        plt.subplot(1, 3, 3)
-        for festival_col, lag_festival_col in zip(festival_columns, lag_festival_columns):
-            avg_prices = df1[df1['Date'].dt.year == 2023][festival_col] + df1[df1['Date'].dt.year == 2023][lag_festival_col]
-            plt.plot(festival_col.split('_')[-1], np.mean(avg_prices))
+        # plt.figure(figsize=(22, 8))
+        # plt.subplot(1, 3, 3)
+        # for festival_col, lag_festival_col in zip(festival_columns, lag_festival_columns):
+        #     avg_prices = df1[df1['Date'].dt.year == 2023][festival_col] + df1[df1['Date'].dt.year == 2023][lag_festival_col]
+        #     plt.plot(festival_col.split('_')[-1], np.mean(avg_prices))
 
-        plt.xlabel('Festival')
-        plt.ylabel('Average Transformed Price')
-        plt.title(f'Average Price changes with Festivals - {selected_commodity}')
-        plt.savefig(festivals_buffer, format='png')
-        plt.close()
+        # plt.xlabel('Festival')
+        # plt.ylabel('Average Transformed Price')
+        # plt.title(f'Average Price changes with Festivals - {selected_commodity}')
+        # plt.savefig(festivals_buffer, format='png')
+        # plt.close()
         # Save the plots as separate image files
         # actual_vs_predicted_path = os.path.join(settings.MEDIA_ROOT, 'actual_vs_predicted_plot.png')
         # seasons_path = os.path.join(settings.MEDIA_ROOT, 'seasons_plot.png')
@@ -521,15 +544,18 @@ def analysis_fig(request):
 
         # plt.close()
         actual_vs_predicted_base64 = base64.b64encode(actual_vs_predicted_buffer.getvalue()).decode('utf-8')
-        seasons_base64 = base64.b64encode(seasons_buffer.getvalue()).decode('utf-8')
-        festivals_base64 = base64.b64encode(festivals_buffer.getvalue()).decode('utf-8')
+        trend_base64 = base64.b64encode(trend_buffer.getvalue()).decode('utf-8')
+
+        # seasons_base64 = base64.b64encode(seasons_buffer.getvalue()).decode('utf-8')
+        # festivals_base64 = base64.b64encode(festivals_buffer.getvalue()).decode('utf-8')
         context = {
             'actual_prices': actual_prices,
             'predicted_prices': predicted_prices,
             'commodity' : selected_commodity,
             'actual_vs_predicted_base64': actual_vs_predicted_base64,
-            'seasons_base64': seasons_base64,
-            'festivals_base64': festivals_base64,
+            'trend_base64' : trend_base64,
+            # 'seasons_base64': seasons_base64,
+            # 'festivals_base64': festivals_base64,
 
         }
 

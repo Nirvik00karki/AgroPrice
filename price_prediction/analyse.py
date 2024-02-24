@@ -206,3 +206,52 @@ def predict_average_price(request):
         return render(request, 'result.html', context)
     else:
         return JsonResponse({'error': 'Invalid request method'})
+
+
+def generate_actual_vs_predicted_plot(actual_prices, predicted_prices):
+    # actual_prices = np.exp(actual_prices)
+    predicted_prices = np.exp(predicted_prices)
+
+    plt.plot(actual_prices, label='Actual Prices', marker='o')
+    plt.plot(predicted_prices, label='Predicted Prices', marker='o')
+    plt.xlabel('Time')
+    plt.ylabel('Price')
+    plt.title('Actual vs Predicted Prices')
+    plt.legend()
+
+    # Convert plot to base64 for embedding in HTML
+    buffer = BytesIO()
+    plt.savefig(buffer, format='png')
+    buffer.seek(0)
+    plt.close()
+
+    plot_data = base64.b64encode(buffer.read()).decode('utf-8')
+    return plot_data
+def analysis_view(request):
+    return render(request, 'analysis.html')
+
+def analysis_fig(request):
+    if request.method == 'POST':
+        data = json.loads(request.body.decode('utf-8'))
+        selected_commodity = data.get('commodity')
+        print{f'Selected commodity: {selected_commodity}'}
+        import pdb
+        pdb.set_trace()
+        if not selected_commodity:
+            return JsonResponse({'error': 'No commodity selected for analysis'})
+
+        # Get actual and predicted prices from the context
+        actual_prices = data.get('commodity_data', [])
+        predicted_prices = data.get('predicted_prices', [])
+
+        # Generate actual vs predicted plot
+        actual_vs_predicted_plot = generate_actual_vs_predicted_plot(actual_prices, predicted_prices)
+
+        context = {
+            'commodity': selected_commodity,
+            'actual_vs_predicted_plot': actual_vs_predicted_plot,
+        }
+
+        return render(request, 'analysis.html', context)
+    else:
+        return JsonResponse({'error': 'Invalid request method'})
