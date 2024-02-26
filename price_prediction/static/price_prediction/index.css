@@ -33,7 +33,7 @@ p{
     color: #555;
 }
 .container{
-    max-width: 1300px;
+    max-width: 100%;
     margin: auto;
     padding-left: 25px;
     padding-right: 25px;
@@ -138,52 +138,84 @@ h4{
     transform: translateY(-10px);
 }
 
-.footer{
-    background: #000;
-    color:#8a8a8a;
-    font-size: 14px;
-    padding: 60px 0 20px;
+/* Services Section */
+.services {
+    background-color: radial-gradient(#fff,#ffd6d6);
+    padding: 50px 0;
 }
-.footer p{
-    color: #8a8a8a;
+
+.services .row {
+    display: flex;
+    justify-content: space-around;
+    align-items: center;
 }
-.footer h3{
-    color: #fff;
-    margin-bottom: 20px;
-}
-.footer-col-1, .footer-col-2, .footer-col-3, .footer-col-4{
-    min-width: 250px;
-    margin-bottom: 20px;
-}
-.footer-col-1{
-    flex-basis: 30%;
-}
-.footer-col-2{
-    flex: 1;
+
+.services .col-4 {
     text-align: center;
+    padding: 20px;
 }
-.footer-col-2 img{
-    width:180px;
+
+.services img {
+    width: 100px;
+    height: 300px;
+    margin-bottom: 20px;
+    border:1px white;
+    border-radius: 10px;
+}
+
+/* Review Form */
+.review-form {
+    background-color: radial-gradient(#fff,#ffd6d6);
+    padding: 100px 0;
+}
+
+.review-form .row {
+    display: flex;
+    justify-content: space-around;
+    align-items: center;
+}
+
+.review-form h2 {
+    font-size: 24px;
     margin-bottom: 20px;
 }
-.footer-col-3, .footer-col-4{
+
+.review-form form {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+}
+
+.review-form input,
+.review-form textarea {
+    width: 100%;
+    height: auto;
+    padding: 10px;
+    margin-bottom: 20px;
+    border: 1px solid #ccc;
+    border-radius: 5px;
+}
+
+.review-form button {
+    padding: 10px 20px;
+    background-color: #ff523b;
+    color: #fff;
+    border: none;
+    border-radius: 5px;
+    cursor: pointer;
+    transition: background-color 0.3s;
+}
+
+.review-form button:hover {
+    background-color: #563434;
+}
+.footer1-col-2 img{
+    width:100px;
+    margin-bottom: 20px;
+}
+.footer1-col-2, .footer1-col-3{
     flex-basis: 12%;
     text-align: center;
-}
-ul{
-    list-style-type: none;
-}
-.app-logo{
-    margin-top: 20px;
-}
-.app-logo img{
-    width: 140px;
-}
-.footer hr{
-    border: none;
-    background: #b5b5b5;
-    height: 1px;
-    margin: 20px 0;
 }
 .copyright{
     text-align: center;

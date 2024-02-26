@@ -138,7 +138,6 @@ def ridge_regression_predict(coefficients, X):
     predictions = X @ coefficients
     return predictions
 
-# @csrf_exempt
 def predict_average_price(request):
     print("Predict average price function called")
     if request.method == 'POST':
@@ -192,15 +191,6 @@ def predict_average_price(request):
 
         # Make predictions
         y_pred = ridge_regression_predict(coefficients, X_test)     
-        # ridge_model = Ridge(alpha=1.0)
-        # ridge_model.fit(x_train, y_train)
-
-        # lmodel = LinearRegression()
-        # lmodel.fit(x_train, y_train)
-
-        # model = make_pipeline(StandardScaler(), SGDRegressor(max_iter=1000, tol=1e-3))
-        # model.fit(x_train, y_train)
-        # y_pred = ridge_model.predict(x_test)
 
         mse = mean_squared_error(y_test, y_pred)
         r2 = r2_score(y_test, y_pred)
@@ -217,8 +207,6 @@ def predict_average_price(request):
 
 # Set initial previous_date to one day before the prediction date
         previous_date = selected_date - pd.DateOffset(days=1)
-
-# Initialize previous_date_features with the known lag value
         previous_date_features = pd.DataFrame({
             'day': [int(previous_date.day)],
             'month': [int(previous_date.month)],
@@ -235,7 +223,7 @@ def predict_average_price(request):
             'Lettuce': [0],
             'Onion_Dry_Indian': [0],
             'Potato_White': [0],
-            'Tomato_Big_Nepali': [0],
+            'Tomato_Big_Nepali': [1],
             'Festival_Buddha_Jayanti': [0],
             'Festival_Dashain': [0],
             'Festival_Gai_Jatra': [0],
@@ -266,75 +254,66 @@ def predict_average_price(request):
             'Fall_near': [0],
             'Spring_near': [0],
             'Summer_near': [0],
-            'Winter_near': [0],
+            'Winter_near': [1],
             'Average_lag1': [known_lag_value],
-            # 'day_sin': [0],
-            # 'day_cos': [0],
-
         })
 
-    previous_date_features = previous_date_features.values.reshape(1, -1)
-    while previous_date.date() < selected_date:
-    # Predict lag value for the current previous_date
-        previous_date_features_scaled = scaler.transform(previous_date_features)
-    # Predict lag value for the current previous_date
-        previous_date_lag = ridge_regression_predict(coefficients, np.c_[np.ones(previous_date_features_scaled.shape[0]), previous_date_features_scaled])[0] 
-    # Update previous_date to the next day
-        previous_date += pd.DateOffset(days=1)
+        previous_date_features = previous_date_features.values.reshape(1, -1)
+        while previous_date.date() < selected_date:
+            previous_date_features_scaled = scaler.transform(previous_date_features)
+            previous_date_lag = ridge_regression_predict(coefficients, np.c_[np.ones(previous_date_features_scaled.shape[0]), previous_date_features_scaled])[0] 
+            previous_date += pd.DateOffset(days=1)
 
-        # Update previous_date_features with the predicted lag value and date features
-        previous_date_features = pd.DataFrame({
-            'day': [int(previous_date.day)],
-            'month': [int(previous_date.month)],
-            'year': [int(previous_date.year)],
-            'Season_Fall': [0], 
-            'Season_Spring': [0],
-            'Season_Summer': [0],
-            'Season_Winter': [1],
-            'Apple_Jholey': [0],
-            'Banana': [0],
-            'Carrot_Local': [0],
-            'Cucumber_Local': [0],
-            'Garlic_Dry_Nepali': [0],
-            'Lettuce': [0],
-            'Onion_Dry_Indian': [0],
-            'Potato_White': [0],
-            'Tomato_Big_Nepali': [0],
-            'Festival_Buddha_Jayanti': [0],
-            'Festival_Dashain': [0],
-            'Festival_Gai_Jatra': [0],
-            'Festival_Ghode_Jatra': [0],
-            'Festival_Holi': [0],
-            'Festival_Indra_Jatra': [0],
-            'Festival_Janai_Purnima': [0],
-            'Festival_Lhosar': [0],
-            'Festival_Maghe_Sankranti': [0],
-            'Festival_Maha_Shivaratri': [0],
-            'Festival_Shree_Panchami': [0],
-            'Festival_Teej': [0],
-            'Festival_Tihar': [0],
-            'Festival_nan': [0],
-            'Dashain_near': [0],
-            'Tihar_near': [0],
-            'Holi_near': [0],
-            'Maha_Shivaratri_near': [0],
-            'Buddha_Jayanti_near': [0],
-            'Ghode_Jatra_near': [0],
-            'Teej_near': [0],
-            'Indra_Jatra_near': [0],
-            'Lhosar_near': [0],
-            'Janai_Purnima_near': [0],
-            'Gai_Jatra_near': [0],
-            'Maghe_Sankranti_near': [0],
-            'Shree_Panchami_near': [0],
-            'Fall_near': [0],
-            'Spring_near': [0],
-            'Summer_near': [0],
-            'Winter_near': [0],
-            'Average_lag1': [previous_date_lag],
-            # 'day_sin': [0],
-            # 'day_cos': [0],
-        })
+            previous_date_features = pd.DataFrame({
+                'day': [int(previous_date.day)],
+                'month': [int(previous_date.month)],
+                'year': [int(previous_date.year)],
+                'Season_Fall': [0], 
+                'Season_Spring': [0],
+                'Season_Summer': [0],
+                'Season_Winter': [1],
+                'Apple_Jholey': [0],
+                'Banana': [0],
+                'Carrot_Local': [0],
+                'Cucumber_Local': [0],
+                'Garlic_Dry_Nepali': [0],
+                'Lettuce': [0],
+                'Onion_Dry_Indian': [0],
+                'Potato_White': [0],
+                'Tomato_Big_Nepali': [1],
+                'Festival_Buddha_Jayanti': [0],
+                'Festival_Dashain': [0],
+                'Festival_Gai_Jatra': [0],
+                'Festival_Ghode_Jatra': [0],
+                'Festival_Holi': [0],
+                'Festival_Indra_Jatra': [0],
+                'Festival_Janai_Purnima': [0],
+                'Festival_Lhosar': [0],
+                'Festival_Maghe_Sankranti': [0],
+                'Festival_Maha_Shivaratri': [0],
+                'Festival_Shree_Panchami': [0],
+                'Festival_Teej': [0],
+                'Festival_Tihar': [0],
+                'Festival_nan': [1],
+                'Dashain_near': [0],
+                'Tihar_near': [0],
+                'Holi_near': [0],
+                'Maha_Shivaratri_near': [0],
+                'Buddha_Jayanti_near': [0],
+                'Ghode_Jatra_near': [0],
+                'Teej_near': [0],
+                'Indra_Jatra_near': [0],
+                'Lhosar_near': [0],
+                'Janai_Purnima_near': [0],
+                'Gai_Jatra_near': [0],
+                'Maghe_Sankranti_near': [0],
+                'Shree_Panchami_near': [0],
+                'Fall_near': [0],
+                'Spring_near': [0],
+                'Summer_near': [0],
+                'Winter_near': [1],
+                'Average_lag1': [previous_date_lag],
+            })
 
         previous_date_features = previous_date_features.values.reshape(1, -1)
 
@@ -346,15 +325,15 @@ def predict_average_price(request):
             'Season_Spring': [0],
             'Season_Summer': [0],
             'Season_Winter': [1],
-            'Apple_Jholey': [0],
-            'Banana': [0],
-            'Carrot_Local': [0],
-            'Cucumber_Local': [0],
-            'Garlic_Dry_Nepali': [0],
-            'Lettuce': [0],
-            'Onion_Dry_Indian': [0],
-            'Potato_White': [0],
-            'Tomato_Big_Nepali': [0],
+            'Apple_Jholey': [1],
+            'Banana': [1],
+            'Carrot_Local': [1],
+            'Cucumber_Local': [1],
+            'Garlic_Dry_Nepali': [1],
+            'Lettuce': [1],
+            'Onion_Dry_Indian': [1],
+            'Potato_White': [1],
+            'Tomato_Big_Nepali': [1],
             'Festival_Buddha_Jayanti': [0],
             'Festival_Dashain': [0],
             'Festival_Gai_Jatra': [0],
@@ -368,7 +347,7 @@ def predict_average_price(request):
             'Festival_Shree_Panchami': [0],
             'Festival_Teej': [0],
             'Festival_Tihar': [0],
-            'Festival_nan': [0],
+            'Festival_nan': [1],
             'Dashain_near': [0],
             'Tihar_near': [0],
             'Holi_near': [0],
@@ -385,10 +364,8 @@ def predict_average_price(request):
             'Fall_near': [0],
             'Spring_near': [0],
             'Summer_near': [0],
-            'Winter_near': [0],
+            'Winter_near': [1],
             'Average_lag1' : [previous_date_lag],
-            # 'day_sin': [0],
-            # 'day_cos': [0],
         })
 
         selected_date_features = selected_date_features.values.reshape(1, -1)
@@ -402,11 +379,6 @@ def predict_average_price(request):
         print("Raw Prediction:", prediction)
         predicted_average_price = np.exp(prediction[0])
         print("Predicted Price:", predicted_average_price)
-
-        # actual_data = get_commodity_data(request, json.dumps([selected_commodity]))
-        # actual_prices = actual_data['commodity_data'][selected_commodity]['average_price']
-
-        # Return the predicted and actual prices along with other data
         context = {
             'predicted_price': predicted_average_price,
             'predicted_prices': json.dumps(list(np.exp(y_pred))),
@@ -416,7 +388,6 @@ def predict_average_price(request):
             'date': selected_date,
             'commodity': selected_commodity,
         }
-    # Render the result.html template with the provided context
         return render(request, 'result.html', context)
     else:
         return JsonResponse({'error': 'Invalid request method'})
@@ -570,7 +541,7 @@ def generate_chart(request):
         if not selected_commodity:
             return JsonResponse({'error': 'No commodity selected'})
 
-        df = pd.read_csv(r'C:\Users\nirvi\OneDrive\Desktop\Programs\Mlcurrent\forchart.csv')
+        df = pd.read_csv(r'C:\Users\nirvi\OneDrive\Desktop\Programs\Mlcurrent\forchart2.csv')
         df1 = df[df['Commodity'] == selected_commodity]
         if df1.empty:
             return JsonResponse({'error': f'No data found for {selected_commodity}'})
@@ -580,10 +551,11 @@ def generate_chart(request):
         seasons = df_2023_2024['Season'].tolist()
         averages = df_2023_2024['Average'].tolist()
         dates = df_2023_2024['Date'].tolist()
+        festivals = df_2023_2024['Festival'].tolist()
         years = df1['year'].tolist()
         yearAverages = df1['Average'].tolist()
         
-        context = {'seasons': seasons, 'averages': averages, 'dates': dates, 'years': years, 'yearAverages': yearAverages }
+        context = {'seasons': seasons, 'averages': averages, 'dates': dates, 'years': years, 'yearAverages': yearAverages, 'festivals': festivals }
         return JsonResponse(context)
     else:
         return JsonResponse({'error': 'Invalid request method'})

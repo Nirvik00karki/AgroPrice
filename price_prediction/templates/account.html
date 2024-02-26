@@ -1,4 +1,15 @@
 {% load static %}
+<html>
+    <head>
+        <style>
+            .footer{
+                background: #2c2a2a;
+            }
+            nav{
+                background-color: radial-gradient(#f0fff0, lightyellow);;
+            }
+        </style>
+    </head>
 {% include "navbar.html" %}
 <div class="account-page">
     <div class="container">
@@ -19,11 +30,6 @@
                         <input type="password" placeholder="Password" name="password">
                         <button type="submit" class="btn">Login</button>
                         <a href="">Forgot Password</a>
-                        {% if user.is_authenticated %}
-                        <form method="post" action="/logout/">
-                            <button type="submit" class="btn">Log out</button>
-                            </form>
-                        {% endif %}
                     </form>
                     <form id="RegForm" method="post" action="{% url 'register' %}">
                         {% csrf_token %}
@@ -42,33 +48,24 @@
                                     <!--Footer-->
 <div class="footer">
     <div class="container">
-        <div class="row">
-            </div>
             <div class="footer-col-2">
-               <img src="{% static 'price_prediction/images/aa.png' %}">
+               <img src="{% static 'price_prediction/images/vegetables1.png' %}">
                 <p>Our purpose is to help you for vegetable price prediction.</p>
-            </div>
-            <div class="footer-col-3">
-                <h3> Useful Links</h3>
-              <ul>
-                <li>Join Affiliate</li>
-              </ul>
             </div>
             <div class="footer-col-4">
                 <h3> Follow us</h3>
               <ul>
                 <li> Facebook</li>
                 <li>Instagram</li>
-                <li> You Tube</li>
-                <li>Twitter</li>
               </ul>
             </div>
-        </div>
+    </div>
         <hr>
         <p class="copyright">Copyright 2024 - AgroPrice</p>
-    </div>
+ </div>
     
 </div>
+</html>
 <!--Js for toggle menu-->
 <script>
     var MenuItems = document.getElementById("MenuItems");

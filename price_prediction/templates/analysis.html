@@ -5,7 +5,10 @@
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <title>Analysis - {{ commodity }}</title>
-    <link rel="stylesheet" href="{% static 'price_prediction/analysis.css' %}"/>
+    <link
+      rel="stylesheet"
+      href="{% static 'price_prediction/analysis.css' %}"
+    />
     <style>
       .analysis-container {
         max-width: 1000px;
@@ -43,15 +46,22 @@
         <h3></h3>
         <div id="seasons-plot"></div> -->
       <div class="plot-container" id="average-seasons-container">
-        <h3 id="chartheader1">Average Price Over 2022 and 2024</h3>
+        <h3 id="chartheader1">Average Price vs Seasons Over 2023 and 2024</h3>
         <canvas id="average-seasons-plot"></canvas>
       </div>
       <div class="plot-container" id="average-year-container">
         <h3 id="chartheader2">Price of the commodity over the years</h3>
         <canvas id="average-year-plot"></canvas>
       </div>
+      <div class="plot-container" id="average-festival-container">
+        <h3>Average Price vs Festivals Over 2023 and 2024</h3>
+        <canvas id="average-festival-plot"></canvas>
+      </div>
     </div>
     <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/3.7.0/chart.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/chartjs-plugin-zoom"></script>
+
     <script>
       window.onload = function () {
         const commodityDropdown = document.getElementById("commodity");
@@ -150,6 +160,7 @@
         // Extract data from the chartData object
         const seasons = chartData.seasons; // Assuming these are already in a suitable format
         const averages = chartData.averages; // Assuming these are already in a suitable format
+        const festivals = chartData.festivals;
         const dates = chartData.dates; // Assuming these are already in a suitable format
         const years = chartData.years; // Assuming these are already in a suitable format
         const yearAverages = chartData.yearAverages; // Assuming these are already in a suitable format
@@ -191,6 +202,21 @@
                   },
                 },
               },
+              zoom: {
+                pan: {
+                  enabled: true,
+                  mode: "x",
+                },
+                zoom: {
+                  wheel: {
+                    enabled: true,
+                  },
+                  pinch: {
+                    enabled: true,
+                  },
+                  mode: "x",
+                },
+              },
             },
           },
         });
@@ -228,6 +254,74 @@
                     );
                     return `Year: ${year}, Average Price: ${averagePrice}`;
                   },
+                },
+              },
+              zoom: {
+                pan: {
+                  enabled: true,
+                  mode: "x",
+                },
+                zoom: {
+                  wheel: {
+                    enabled: true,
+                  },
+                  pinch: {
+                    enabled: true,
+                  },
+                  mode: "x",
+                },
+              },
+            },
+          },
+        });
+        const ctx3 = document
+          .getElementById("average-festival-plot")
+          .getContext("2d");
+        const chart3 = new Chart(ctx3, {
+          type: "line",
+          data: {
+            labels: festivals,
+            datasets: [
+              {
+                label: "Average Price",
+                data: averages,
+                fill: false,
+                borderColor: "rgba(75, 192, 192, 1)",
+                tension: 0.1,
+              },
+            ],
+          },
+          options: {
+            scales: {
+              y: {
+                beginAtZero: true,
+              },
+            },
+            plugins: {
+              tooltip: {
+                callbacks: {
+                  label: function (context) {
+                    const festival = festivals[context.dataIndex];
+                    const averagePrice = parseFloat(context.parsed.y).toFixed(
+                      2
+                    );
+                    return `Festival: ${festival}, Average Price: ${averagePrice}`;
+                  },
+                },
+              },
+              zoom: {
+                pan: {
+                  enabled: true,
+                  mode: "x",
+                },
+                zoom: {
+                  wheel: {
+                    enabled: true,
+                  },
+                  pinch: {
+                    enabled: true,
+                  },
+                  mode: "x",
                 },
               },
             },

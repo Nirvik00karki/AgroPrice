@@ -2,22 +2,26 @@
 <!DOCTYPE html>
 <html>
 <head>
-    <title>Commodity Prices</title>
+    <title>View Daily Commodity Prices</title>
     <link rel="stylesheet" href="{% static 'price_prediction/pricesearch.css' %}">
 </head>
 <body>
     <header>
         {% include "navbar.html" %} 
     </header>
-    <h1>Commodity Prices</h1>
-    <label for="searchInput">Select Commodity:</label>
-    <input type="text" id="searchInput" placeholder="Search for commodity..."><br><br>
-    <label for="dateInput">Select Date:</label>
-    <input type="date" id="dateInput">
-    <button onclick="searchCommodity()">Search</button>
-    <br><br>
-    <div id="result"></div>
+    <div class="container">
+        <h1>Commodity Prices</h1>
+        <label for="searchInput">Select Commodity:</label>
+        <input type="text" id="searchInput" placeholder="Search for commodity...">
+        <br><br>
+        <label for="dateInput">Select Date:</label>
+        <input type="date" id="dateInput">
+        <button onclick="searchCommodity()">Search</button>
+        <br><br>
+        <div id="result"></div>
+    </div>
 
     <script src="{% static 'price_prediction/pricesearch.js' %}"></script>
 </body>
 </html>
+
