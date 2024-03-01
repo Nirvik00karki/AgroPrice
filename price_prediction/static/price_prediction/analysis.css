@@ -48,7 +48,8 @@ h2 {
 #seasons-container, */
 #average-seasons-container,
 #average-year-container,
-#average-festival-container {
+#average-festival-container
+{
   background-color: white;
   width: 80%; /* Full width of the container */
 }

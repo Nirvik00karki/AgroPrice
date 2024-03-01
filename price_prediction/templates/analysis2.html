@@ -1,0 +1,381 @@
+{% load static %}
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Analysis - {{ commodity }}</title>
+    <link
+      rel="stylesheet"
+      href="{% static 'price_prediction/analysis.css' %}"
+    />
+    <style>
+      .analysis-container {
+        max-width: 1000px;
+        margin: 20px auto;
+        background-color: white;
+        padding: 20px;
+        border-radius: 8px;
+        box-shadow: 0 0 10px rgba(0, 0, 0, 0.1); /* Box shadow for a subtle elevation effect */
+      }
+      #average-seasons-container,
+      #average-year-container,
+      #average-festival-container {
+        background-color: white;
+        width: 80%; /* Full width of the container */
+      }
+
+      /* #actual-vs-predicted-plot,
+#seasons-plot, */
+      #average-seasons-plot,
+      #average-year-plot,
+      #average-festival-plot {
+        width: 80%; /* Full width of the plot */
+        height: 100%;
+        margin-left: auto;
+        margin-right: auto;
+      }
+    </style>
+  </head>
+
+  <body>
+    {% include 'navbar.html' %}
+
+    <div class="analysis-container">
+      <div class="dropdown-container">
+        <div class="dropdown">
+          <label for="commodity">Select Commodity:</label>
+          <select id="commodity"></select>
+        </div>
+        <button class="button" onclick="loadAnalysis()">Load Analysis</button>
+      </div>
+
+      <h2 id="analysis-header" hidden>
+        Analysis for Commodity:<span id="selected-commodity">{{ commodity }}</span>
+      </h2>
+
+      <!-- <div class="plot-container" id="actual-vs-predicted-container"> -->
+      <!-- <h3>Actual vs Predicted Prices</h3>
+        <div id="actual-vs-predicted-plot"></div>
+      </div>
+
+      <div class="plot-container" id="seasons-container">
+        <h3></h3>
+        <div id="seasons-plot"></div> -->
+      <div
+        class="plot-container"
+        id="average-seasons-container"
+        style="width: 100%"
+      >
+        <h3 id="chartheader1" hidden>1.Average Price vs Seasons Over 2023 and 2024</h3>
+        <canvas id="average-seasons-plot"></canvas>
+      </div>
+      <div
+        class="plot-container"
+        id="average-year-container"
+        style="width: 100%"
+      >
+        <h3 id="chartheader2" hidden>2.Price of the commodity over the years</h3>
+        <canvas id="average-year-plot"></canvas>
+      </div>
+      <div
+        class="plot-container"
+        id="average-festival-container"
+        style="width: 100%"
+      >
+        <h3 id="chartheader3" hidden>
+          3.Average Price vs Festivals Over 2023 and 2024
+        </h3>
+        <canvas id="average-festival-plot" style="width: 100%"></canvas>
+      </div>
+    </div>
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/3.7.0/chart.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/chartjs-plugin-zoom"></script>
+
+    <script>
+      window.onload = function () {
+        const commodityDropdown = document.getElementById("commodity");
+
+        fetch("/get_commodities/")
+          .then((response) => response.json())
+          .then((data) => {
+            data.forEach((commodity) => {
+              const option = document.createElement("option");
+              option.value = commodity;
+              option.textContent = commodity;
+              commodityDropdown.appendChild(option);
+            });
+          })
+          .catch((error) => {
+            console.error("Error:", error);
+          });
+      };
+
+      function loadAnalysis() {
+        const selectedCommodity = document.getElementById("commodity").value;
+        document.getElementById("analysis-header").removeAttribute("hidden");
+        document.getElementById("chartheader1").removeAttribute("hidden");
+        document.getElementById("chartheader2").removeAttribute("hidden");
+        document.getElementById("chartheader3").removeAttribute("hidden");
+
+        // document.getElementById("analysis-header").style.display = "block";
+        // document.getElementById("chartheader1").style.display = "block";
+        // document.getElementById("chartheader2").style.display = "block";
+
+        // Now call the /api/analyze/ endpoint
+        fetch("/api/analyze/", {
+          method: "POST",
+          headers: {
+            "Content-Type": "application/json",
+            "X-CSRFToken": "{{ csrf_token }}",
+          },
+          body: JSON.stringify({
+            commodity: selectedCommodity,
+          }),
+        })
+          .then((response) => response.json())
+          .then((context) => {
+            // Log or use the context data as needed
+            console.log("Context Data:", context);
+
+            // Access the commodity value from the context
+            const commodityValue = context.commodity;
+            console.log("Commodity Value:", commodityValue);
+
+            document.getElementById("selected-commodity").textContent =
+              commodityValue;
+
+            // Display the plots
+            // displayPlot(
+            //   "actual-vs-predicted-container",
+            //   "actual-vs-predicted-plot",
+            //   context.actual_vs_predicted_base64
+            // );
+            // displayPlot(
+            //   "seasons-container",
+            //   "seasons-plot",
+            //   context.trend_base64
+            // );
+            fetch("/generate_chart/", {
+              method: "POST",
+              headers: {
+                "Content-Type": "application/json",
+                "X-CSRFToken": "{{ csrf_token }}",
+              },
+              body: JSON.stringify({
+                commodity: selectedCommodity,
+              }),
+            })
+              .then((response) => response.json())
+              .then((chartData) => {
+                console.log("Chart Data:", chartData);
+                generateInteractiveChart(chartData);
+              })
+              .catch((error) => {
+                console.error("Error fetching chart data:", error);
+              });
+          })
+          .catch((error) => {
+            console.error("Error fetching data:", error);
+          });
+      }
+
+      // function displayPlot(containerId, plotId, base64Image) {
+      //   const container = document.getElementById(containerId);
+      //   container.style.display = "block";
+
+      //   const plotContainer = document.getElementById(plotId);
+      //   plotContainer.innerHTML = `<img src="data:image/png;base64,${base64Image}" alt="${plotId}">`;
+      // }
+
+      function generateInteractiveChart(chartData) {
+        if (window.chart1) {
+          window.chart1.destroy();
+        }
+        if (window.chart2) {
+          window.chart2.destroy();
+        }
+        if (window.chart3) {
+          window.chart3.destroy();
+        }
+        // document.getElementById("average-seasons-container").innerHTML =
+        //   '<canvas id="average-seasons-plot">Average Price vs Seasons Over 2023 and 2024</canvas>';
+        // document.getElementById("average-year-container").innerHTML =
+        //   '<canvas id="average-year-plot">Price of the commodity over the years</canvas>';
+        // document.getElementById("average-festival-container").innerHTML =
+        //   '<canvas id="average-festival-plot">Average Price vs Festivals Over 2023 and 2024</canvas>';
+        // Extract data from the chartData object
+        const seasons = chartData.seasons; // Assuming these are already in a suitable format
+        const averages = chartData.averages; // Assuming these are already in a suitable format
+        const festivals = chartData.festivals;
+        const dates = chartData.dates; // Assuming these are already in a suitable format
+        const years = chartData.years; // Assuming these are already in a suitable format
+        const yearAverages = chartData.yearAverages; // Assuming these are already in a suitable format
+
+        // Create a new chart using Chart.js
+        const ctx1 = document
+          .getElementById("average-seasons-plot")
+          .getContext("2d");
+        window.chart1 = new Chart(ctx1, {
+          type: "line",
+          data: {
+            labels: seasons,
+            datasets: [
+              {
+                label: "Average Price",
+                data: averages,
+                fill: false,
+                borderColor: "rgba(75, 192, 192, 1)",
+                tension: 0.1,
+              },
+            ],
+          },
+          options: {
+            scales: {
+              y: {
+                beginAtZero: true,
+              },
+            },
+            plugins: {
+              tooltip: {
+                callbacks: {
+                  label: function (context) {
+                    const date = new Date(dates[context.dataIndex]);
+                    const formattedDate = date.toISOString().slice(0, 10);
+                    const averagePrice = parseFloat(context.parsed.y).toFixed(
+                      2
+                    );
+                    return `Date: ${formattedDate}, Average Price: ${averagePrice}`;
+                  },
+                },
+              },
+              zoom: {
+                pan: {
+                  enabled: true,
+                  mode: "x",
+                },
+                zoom: {
+                  wheel: {
+                    enabled: true,
+                  },
+                  pinch: {
+                    enabled: true,
+                  },
+                  mode: "x",
+                },
+              },
+            },
+          },
+        });
+
+        const ctx2 = document
+          .getElementById("average-year-plot")
+          .getContext("2d");
+        window.chart2 = new Chart(ctx2, {
+          type: "line",
+          data: {
+            labels: years,
+            datasets: [
+              {
+                label: "Average Price",
+                data: yearAverages,
+                fill: false,
+                borderColor: "rgba(75, 192, 192, 1)",
+                tension: 0.1,
+              },
+            ],
+          },
+          options: {
+            scales: {
+              y: {
+                beginAtZero: true,
+              },
+            },
+            plugins: {
+              tooltip: {
+                callbacks: {
+                  label: function (context) {
+                    const year = years[context.dataIndex];
+                    const averagePrice = parseFloat(context.parsed.y).toFixed(
+                      2
+                    );
+                    return `Year: ${year}, Average Price: ${averagePrice}`;
+                  },
+                },
+              },
+              zoom: {
+                pan: {
+                  enabled: true,
+                  mode: "x",
+                },
+                zoom: {
+                  wheel: {
+                    enabled: true,
+                  },
+                  pinch: {
+                    enabled: true,
+                  },
+                  mode: "x",
+                },
+              },
+            },
+          },
+        });
+        const ctx3 = document
+          .getElementById("average-festival-plot")
+          .getContext("2d");
+        window.chart3 = new Chart(ctx3, {
+          type: "line",
+          data: {
+            labels: festivals,
+            datasets: [
+              {
+                label: "Average Price",
+                data: averages,
+                fill: false,
+                borderColor: "rgba(75, 192, 192, 1)",
+                tension: 0.1,
+              },
+            ],
+          },
+          options: {
+            scales: {
+              y: {
+                beginAtZero: true,
+              },
+            },
+            plugins: {
+              tooltip: {
+                callbacks: {
+                  label: function (context) {
+                    const festival = festivals[context.dataIndex];
+                    const averagePrice = parseFloat(context.parsed.y).toFixed(
+                      2
+                    );
+                    return `Festival: ${festival}, Average Price: ${averagePrice}`;
+                  },
+                },
+              },
+              zoom: {
+                pan: {
+                  enabled: true,
+                  mode: "x",
+                },
+                zoom: {
+                  wheel: {
+                    enabled: true,
+                  },
+                  pinch: {
+                    enabled: true,
+                  },
+                  mode: "x",
+                },
+              },
+            },
+          },
+        });
+      }
+    </script>
+  </body>
+</html>

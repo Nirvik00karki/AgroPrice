@@ -10,6 +10,17 @@
       href="{% static 'price_prediction/analysis.css' %}"
     />
     <style>
+      body {
+        font-family: "Arial", sans-serif;
+        background-color: #f8f9fa; /* Light gray background color */
+        margin: 0;
+        padding: 0;
+      }
+
+      h2 {
+        color: #343a40; /* Dark text color for headers */
+      }
+
       .analysis-container {
         max-width: 1000px;
         margin: 20px auto;
@@ -18,6 +29,69 @@
         border-radius: 8px;
         box-shadow: 0 0 10px rgba(0, 0, 0, 0.1); /* Box shadow for a subtle elevation effect */
       }
+      #festival-analysis,
+      #seasons-analysis{
+        padding:20px;
+      }
+      .dropdown-container {
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        margin-bottom: 20px;
+      }
+
+      .dropdown {
+        padding: 10px;
+        border: 1px solid #ced4da; /* Border color for dropdown */
+        border-radius: 4px;
+        background-color: white;
+        color: #495057; /* Text color for dropdown */
+      }
+
+      .button {
+        padding: 10px 15px;
+        border: none;
+        border-radius: 4px;
+        background-color: #007bff; /* Primary button color */
+        color: white;
+        cursor: pointer;
+      }
+
+      .button:hover {
+        background-color: #0056b3; /* Button color on hover */
+      }
+
+      .plot-container {
+        margin-top: 20px;
+      }
+
+      .plot-container img {
+        width: 100%;
+        max-width: 800px;
+        height: auto;
+        display: block;
+        margin: 0 auto;
+        border-radius: 8px;
+        box-shadow: 0 0 10px rgba(0, 0, 0, 0.1); /* Box shadow for images */
+      }
+
+      .plot-container p {
+        margin-top: 10px;
+        text-align: justify;
+      }
+
+      /* Responsive design for smaller screens */
+      @media (max-width: 600px) {
+        .analysis-container {
+          max-width: 100%;
+          margin: 10px;
+        }
+
+        .plot-container img {
+          max-width: 100%;
+          height: auto;
+        }
+      }
     </style>
   </head>
 
@@ -25,309 +99,70 @@
     {% include 'navbar.html' %}
 
     <div class="analysis-container">
-      <div class="dropdown-container">
-        <div class="dropdown">
-          <label for="commodity">Select Commodity:</label>
-          <select id="commodity"></select>
+      <div>
+        <a href="/analysis_view2/"
+          ><button class="button">Analysis For Specific Commodity</button></a
+        >
+      </div>
+      <div class="plot-container" id="analysis-seasons-container">
+        <h3>Heapmap showing price fluctuation of Commodities Based on Season</h3><br>
+        <img
+          style="margin: 0 auto;"
+          id="seasons-image"
+          src="{% static 'price_prediction/images/heatmap.png' %}"
+          alt="Seasons Heatmap"
+        /><br />
+        <div id="seasons-analysis">
+          <p>
+            Price fluctuation of Commodities on the basis of Seasons:<br><br>
+            1.Prices tend to be higher in the winter season (December to February) for
+            most commodities. This is likely due to factors such as decreased production 
+            due to colder weather. For example, the price of apples increases by 20% in winter,
+            while the price of carrots nearly doubles. <br><br>
+            2.Prices tend to be lower in the monsoon season (June to
+            August) for most commodities. This is likely due to increased
+            production during the rainy season. For example, the price of
+            cucumbers drops by 20% in the monsoon season, while the price of
+            tomatoes drops by 10%.
+          </p>
         </div>
-        <button class="button" onclick="loadAnalysis()">Load Analysis</button>
       </div>
-
-      <h2 id="analysis-header">
-        Analysis for <span id="selected-commodity">{{ commodity }}</span>
-      </h2>
-
-      <!-- <div class="plot-container" id="actual-vs-predicted-container"> -->
-      <!-- <h3>Actual vs Predicted Prices</h3>
-        <div id="actual-vs-predicted-plot"></div>
+      <div class="plot-container" id="analysis-festival-container">
+        <h3>Heapmap showing price fluctuation of Commodities Based on Festivals</h3><br>
+        <img
+          id="festival-image"
+          src="{% static 'price_prediction/images/festival_heatmap.png' %}"
+          alt="Festivals Heatmap"
+        /><br />
+        <div id="festival-analysis">
+          <p>
+            Price fluctuation of Commodities on the basis of Festivals:<br><br> 1.Prices
+            tend to increase significantly around major festivals in Nepal. For
+            example, the price of apples nearly doubles around Dashain, the
+            largest and longest festival in Nepal. Similarly, the price of
+            garlic nearly doubles around Lhosar, the Tibetan New Year.<br><br> 2.Prices
+            also tendto fluctuate around smaller festivals. For example, the
+            price of cucumbers increases slightly around Gai Jatra and Ghode
+            Jatra, two festivals that take place close together.<br><br> 3.Not all
+            festivals have a noticeable impact on prices. For example, the price
+            of tomatoes remains relatively stable throughout the year.
+          </p>
+        </div>
       </div>
-
-      <div class="plot-container" id="seasons-container">
-        <h3></h3>
-        <div id="seasons-plot"></div> -->
-      <div class="plot-container" id="average-seasons-container">
-        <h3 id="chartheader1">Average Price vs Seasons Over 2023 and 2024</h3>
-        <canvas id="average-seasons-plot"></canvas>
+      <div class="plot-container">
+        <img
+          id="2022-pie"
+          src="{% static 'price_prediction/images/pie1.png' %}"
+          alt="Festivals Heatmap"
+        />
       </div>
-      <div class="plot-container" id="average-year-container">
-        <h3 id="chartheader2">Price of the commodity over the years</h3>
-        <canvas id="average-year-plot"></canvas>
-      </div>
-      <div class="plot-container" id="average-festival-container">
-        <h3>Average Price vs Festivals Over 2023 and 2024</h3>
-        <canvas id="average-festival-plot"></canvas>
+      <div class="plot-container">
+        <img
+          id="2023-pie"
+          src="{% static 'price_prediction/images/pie2.png' %}"
+          alt="Festivals Heatmap"
+        />
       </div>
     </div>
-    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/3.7.0/chart.min.js"></script>
-    <script src="https://cdn.jsdelivr.net/npm/chartjs-plugin-zoom"></script>
-
-    <script>
-      window.onload = function () {
-        const commodityDropdown = document.getElementById("commodity");
-
-        fetch("/get_commodities/")
-          .then((response) => response.json())
-          .then((data) => {
-            data.forEach((commodity) => {
-              const option = document.createElement("option");
-              option.value = commodity;
-              option.textContent = commodity;
-              commodityDropdown.appendChild(option);
-            });
-          })
-          .catch((error) => {
-            console.error("Error:", error);
-          });
-      };
-
-      function loadAnalysis() {
-        const selectedCommodity = document.getElementById("commodity").value;
-        document.getElementById("analysis-header").style.display = "block";
-        document.getElementById("chartheader1").style.display = "block";
-        document.getElementById("chartheader2").style.display = "block";
-
-        // Now call the /api/analyze/ endpoint
-        fetch("/api/analyze/", {
-          method: "POST",
-          headers: {
-            "Content-Type": "application/json",
-            "X-CSRFToken": "{{ csrf_token }}",
-          },
-          body: JSON.stringify({
-            commodity: selectedCommodity,
-          }),
-        })
-          .then((response) => response.json())
-          .then((context) => {
-            // Log or use the context data as needed
-            console.log("Context Data:", context);
-
-            // Access the commodity value from the context
-            const commodityValue = context.commodity;
-            console.log("Commodity Value:", commodityValue);
-
-            document.getElementById("selected-commodity").textContent =
-              commodityValue;
-
-            // Display the plots
-            // displayPlot(
-            //   "actual-vs-predicted-container",
-            //   "actual-vs-predicted-plot",
-            //   context.actual_vs_predicted_base64
-            // );
-            // displayPlot(
-            //   "seasons-container",
-            //   "seasons-plot",
-            //   context.trend_base64
-            // );
-            fetch("/generate_chart/", {
-              method: "POST",
-              headers: {
-                "Content-Type": "application/json",
-                "X-CSRFToken": "{{ csrf_token }}",
-              },
-              body: JSON.stringify({
-                commodity: selectedCommodity,
-              }),
-            })
-              .then((response) => response.json())
-              .then((chartData) => {
-                // Log or use the chartData as needed
-                console.log("Chart Data:", chartData);
-
-                // Call a function to generate the interactive chart using chartData
-                generateInteractiveChart(chartData);
-              })
-              .catch((error) => {
-                console.error("Error fetching chart data:", error);
-              });
-          })
-          .catch((error) => {
-            console.error("Error fetching data:", error);
-          });
-      }
-
-      // function displayPlot(containerId, plotId, base64Image) {
-      //   const container = document.getElementById(containerId);
-      //   container.style.display = "block";
-
-      //   const plotContainer = document.getElementById(plotId);
-      //   plotContainer.innerHTML = `<img src="data:image/png;base64,${base64Image}" alt="${plotId}">`;
-      // }
-
-      function generateInteractiveChart(chartData) {
-        // Extract data from the chartData object
-        const seasons = chartData.seasons; // Assuming these are already in a suitable format
-        const averages = chartData.averages; // Assuming these are already in a suitable format
-        const festivals = chartData.festivals;
-        const dates = chartData.dates; // Assuming these are already in a suitable format
-        const years = chartData.years; // Assuming these are already in a suitable format
-        const yearAverages = chartData.yearAverages; // Assuming these are already in a suitable format
-
-        // Create a new chart using Chart.js
-        const ctx1 = document
-          .getElementById("average-seasons-plot")
-          .getContext("2d");
-        const chart1 = new Chart(ctx1, {
-          type: "line",
-          data: {
-            labels: seasons,
-            datasets: [
-              {
-                label: "Average Price",
-                data: averages,
-                fill: false,
-                borderColor: "rgba(75, 192, 192, 1)",
-                tension: 0.1,
-              },
-            ],
-          },
-          options: {
-            scales: {
-              y: {
-                beginAtZero: true,
-              },
-            },
-            plugins: {
-              tooltip: {
-                callbacks: {
-                  label: function (context) {
-                    const date = new Date(dates[context.dataIndex]);
-                    const formattedDate = date.toISOString().slice(0, 10);
-                    const averagePrice = parseFloat(context.parsed.y).toFixed(
-                      2
-                    );
-                    return `Date: ${formattedDate}, Average Price: ${averagePrice}`;
-                  },
-                },
-              },
-              zoom: {
-                pan: {
-                  enabled: true,
-                  mode: "x",
-                },
-                zoom: {
-                  wheel: {
-                    enabled: true,
-                  },
-                  pinch: {
-                    enabled: true,
-                  },
-                  mode: "x",
-                },
-              },
-            },
-          },
-        });
-
-        const ctx2 = document
-          .getElementById("average-year-plot")
-          .getContext("2d");
-        const chart2 = new Chart(ctx2, {
-          type: "line",
-          data: {
-            labels: years,
-            datasets: [
-              {
-                label: "Average Price",
-                data: yearAverages,
-                fill: false,
-                borderColor: "rgba(75, 192, 192, 1)",
-                tension: 0.1,
-              },
-            ],
-          },
-          options: {
-            scales: {
-              y: {
-                beginAtZero: true,
-              },
-            },
-            plugins: {
-              tooltip: {
-                callbacks: {
-                  label: function (context) {
-                    const year = years[context.dataIndex];
-                    const averagePrice = parseFloat(context.parsed.y).toFixed(
-                      2
-                    );
-                    return `Year: ${year}, Average Price: ${averagePrice}`;
-                  },
-                },
-              },
-              zoom: {
-                pan: {
-                  enabled: true,
-                  mode: "x",
-                },
-                zoom: {
-                  wheel: {
-                    enabled: true,
-                  },
-                  pinch: {
-                    enabled: true,
-                  },
-                  mode: "x",
-                },
-              },
-            },
-          },
-        });
-        const ctx3 = document
-          .getElementById("average-festival-plot")
-          .getContext("2d");
-        const chart3 = new Chart(ctx3, {
-          type: "line",
-          data: {
-            labels: festivals,
-            datasets: [
-              {
-                label: "Average Price",
-                data: averages,
-                fill: false,
-                borderColor: "rgba(75, 192, 192, 1)",
-                tension: 0.1,
-              },
-            ],
-          },
-          options: {
-            scales: {
-              y: {
-                beginAtZero: true,
-              },
-            },
-            plugins: {
-              tooltip: {
-                callbacks: {
-                  label: function (context) {
-                    const festival = festivals[context.dataIndex];
-                    const averagePrice = parseFloat(context.parsed.y).toFixed(
-                      2
-                    );
-                    return `Festival: ${festival}, Average Price: ${averagePrice}`;
-                  },
-                },
-              },
-              zoom: {
-                pan: {
-                  enabled: true,
-                  mode: "x",
-                },
-                zoom: {
-                  wheel: {
-                    enabled: true,
-                  },
-                  pinch: {
-                    enabled: true,
-                  },
-                  mode: "x",
-                },
-              },
-            },
-          },
-        });
-      }
-    </script>
   </body>
 </html>

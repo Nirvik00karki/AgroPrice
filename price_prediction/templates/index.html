@@ -1,203 +1,319 @@
 {% load static %}
 <html lang="en">
-<head>
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <meta charset="UTF-8">
-    <meta http-equiv="X-UA-Compatible" content="IE=edge">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <link rel="preconnect" href="https://fonts.googleapis.com" >
-    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-    <link rel="stylesheet" href="{% static 'price_prediction\index.css' %}">
-    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700&display=swap" rel="stylesheet">
-   <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@fortawesome/fontawesome-free@6.2.1/css/fontawesome.min.css" integrity="sha384-QYIZto+st3yW+o8+5OHfT6S482Zsvz2WfOzpFSXMF9zqeLcFV0/wlZpMtyFcZALm" crossorigin="anonymous">
-   <style>
-    .container{
+  <head>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <meta charset="UTF-8" />
+    <meta http-equiv="X-UA-Compatible" content="IE=edge" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+    <link
+      rel="stylesheet"
+      href="{% static 'static/price_prediction/index.css' %}"
+    />
+    <link
+      href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700&display=swap"
+      rel="stylesheet"
+    />
+    <link
+      rel="stylesheet"
+      href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.1/css/all.min.css"
+    />
+    <style>
+      /* .container{
     max-width: 100%;
     margin: auto;
     padding-left: 25px;
     padding-right: 25px;
-}
+    }
     /* .default{
         background: radial-gradient(#f0fff0, lightyellow);
     } */
-    .footer1{
-    background: #2c2a2a;
-    /* color:#8a8a8a; */
-    font-size: 14px;
-    padding: 60px 0 20px;
-}
-/* Services Section */
-.services {
-    background-color: radial-gradient(#fff,#ffd6d6);
-    padding: 50px 0;
-}
+      .footer1 {
+        background: #2c2a2a;
+        font-size: 14px;
+        padding: 60px 0 20px;
+      }
+      .services {
+        background-color: radial-gradient(#fff, #ffd6d6);
+        padding: 50px 0;
+      }
 
-.services .row {
-    display: flex;
-    justify-content: space-around;
-    align-items: center;
-}
+      .services .row {
+        display: flex;
+        justify-content: space-around;
+        align-items: center;
+      }
 
-.services .col-4 {
-    text-align: center;
-    padding: 20px;
-}
+      .services .col-4 {
+        text-align: center;
+        padding: 20px;
+      }
 
-.services img {
-    width: 100px;
-    height: 300px;
-    margin-bottom: 20px;
-    border:1px white;
-    border-radius: 10px;
-}
+      .services img {
+        width: 200px;
+        height: 200px;
+        object-fit: cover;
+        margin-bottom: 20px;
+        border: 1px solid white;
+        border-radius: 10px;
+      }
 
-/* Review Form */
-.review-form {
-    background-color: radial-gradient(#fff,#ffd6d6);
-    padding: 50px 0;
-}
+      .review-form {
+        background-color: radial-gradient(#fff, #ffd6d6);
+        padding: 50px 0;
+      }
 
-.review-form .row {
-    display: flex;
-    justify-content: space-around;
-    align-items: center;
-}
+      .review-form .row {
+        display: flex;
+        justify-content: space-around;
+        align-items: center;
+      }
 
-.review-form h2 {
-    font-size: 24px;
-    margin-bottom: 20px;
-}
+      .review-form h2 {
+        font-size: 24px;
+        margin-bottom: 20px;
+      }
 
-.review-form form {
-    display: flex;
-    flex-direction: column;
-    align-items: center;
-}
+      .review-form form {
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+      }
 
-.review-form input,
-.review-form textarea {
-    width: 100%;
-    height: auto;
-    padding: 10px;
-    margin-bottom: 20px;
-    border: 1px solid #ccc;
-    border-radius: 5px;
-}
+      .review-form input,
+      .review-form textarea {
+        width: 100%;
+        height: auto;
+        padding: 10px;
+        margin-bottom: 20px;
+        border: 1px solid #ccc;
+        border-radius: 5px;
+      }
 
-.review-form button {
-    padding: 10px 20px;
-    background-color: #ff523b;
-    color: #fff;
-    border: none;
-    border-radius: 5px;
-    cursor: pointer;
-    transition: background-color 0.3s;
-}
+      .review-form button {
+        padding: 10px 20px;
+        background-color: #ff523b;
+        color: #fff;
+        border: none;
+        border-radius: 5px;
+        cursor: pointer;
+        transition: background-color 0.3s;
+      }
 
-.review-form button:hover {
-    background-color: #563434;
-}
-.footer1-col-2 img{
-    width:100px;
-    margin-bottom: 20px;
-}
-.footer1-col-2, .footer1-col-3{
-    flex-basis: 12%;
-    text-align: center;
-    color: aliceblue;
-}
-   </style>
-</head>
-<div>
-    <div class="header">
+      .review-form button:hover {
+        background-color: #563434;
+      }
+      .footer1-col-2 img {
+        width: 100px;
+        margin-bottom: 20px;
+      }
+      .footer1-col-2,
+      .footer1-col-3 {
+        flex-basis: 12%;
+        text-align: center;
+        color: aliceblue;
+      }
+    </style>
+  </head>
+  <body>
+    <div>
+      <div class="header">
         {% include 'navbar.html' %}
         <div class="container default">
-            <div class="row">
-                <div class="col-2">
-                    <h1>Agro Price</h1><br>
-                    <p>Vegetable Price Prediction System.</p>
-                    <a href="/login/" class="btn">Explore Now &#8594;</a>
-                </div>    
-                <div class="col-2">
-                    <img src="{% static 'price_prediction/images/vege.png' %}" >
-                </div>  
+          <div class="row">
+            <div class="col-2">
+              <h1>Agro Price</h1>
+              <br />
+              <p>Vegetable Price Prediction System.</p>
+              <a 
+              {% if not user.is_authenticated %}
+              href="/login/"
+              {% endif %}
+                class="btn">Explore Now &#8594;</a>
             </div>
+            <div class="col-2">
+              <img src="{% static 'price_prediction/images/vege.png' %}" />
+            </div>
+          </div>
         </div>
-        <hr>
+        <hr />
         <div class="container services">
-            <div class="row">
-                <div class="col-4">
-                    <img src="{% static 'price_prediction/images/pre1.png' %}" alt="Real-Time Market Data Updates">
-                    <h3><b>Real-Time Market Data Updates</b></h3>
-                    <p><b>Stay informed with up-to-day updates.</b></p>
-                </div>
-                <div class="col-4">
-                    <img src="{% static 'price_prediction/images/pre5.jpg' %}" alt="Predictive Analytics Insight">
-                    <h3><b>Predictive Analytics Insight</b></h3>
-                    <p><b>Gain valuable insights for decision making.</b></p>
-                </div>
-                <div class="col-4">
-                    <img src="{% static 'price_prediction/images/pre3.jpg' %}" alt="Market Price Trend Visualization">
-                    <h3><b>Market Price Trend Visualization</b></h3>
-                    <p><b>Market Price Trend Visualization.</b></p>
-                </div>
+          <div class="row">
+            <div class="col-4">
+              <img
+                src="{% static 'price_prediction/images/pre7.png' %}"
+                alt="Real-Time Market Data Updates"
+              />
+              <h3><b>Real-Time Market Data Updates</b></h3>
+              <p><b>Stay informed with up-to-day updates.</b></p>
             </div>
+            <div class="col-4">
+              <img
+                src="{% static 'price_prediction/images/pre6.jpeg' %}"
+                alt="Predictive Analytics Insight"
+              />
+              <h3><b>Predictive Analytics Insight</b></h3>
+              <p><b>Gain valuable insights for decision making.</b></p>
+            </div>
+            <div class="col-4">
+              <img
+                src="{% static 'price_prediction/images/pre5.jpg' %}"
+                alt="Market Price Trend Visualization"
+              />
+              <h3><b>Market Price Trend Visualization</b></h3>
+              <p><b>Market Price Trend Visualization.</b></p>
+            </div>
+          </div>
         </div>
-        <hr>
+        <hr />
         <div class="container review-form">
-            <div class="row">
-                <div class="col-6">
-                    <h2><i>Leave a Review</i></h2>
-                    <p><b>Reach out to us using the review form.<br> We look forward to hearing from you.</b></p>
-                </div>
-                <div class="col-6">
-                    <form>
-                        <input type="text" placeholder="Name">
-                        <input type="email" placeholder="Email">
-                        <textarea placeholder="Message"></textarea>
-                        <button type="submit">Submit</button>
-                    </form>
-                </div>
+          <div class="row">
+            <div class="col-6">
+              <h2><i>Leave a Review</i></h2>
+              <p>
+                <b
+                  >Reach out to us using the review form.<br />
+                  We look forward to hearing from you.</b
+                >
+              </p>
             </div>
+            <div class="col-6">
+                <form id="myForm">
+                    <input type="text" id="name" placeholder="Name">             
+                    <input type="email" id="email" placeholder="Email">
+                    <small style="color: #ff523b;" id="emailError" class="error-message"></small>            
+                    <textarea id="message" placeholder="Message"></textarea>
+                    <small style="color: #ff523b" id="messageError" class="error-message"></small>     
+                    <button type="submit">Submit</button>
+                </form>
+            </div>
+          </div>
         </div>
-    </div>                
-</div>
-<hr>
-<!--Footer-->
-<div class="footer1">
-    <div class="container">
-        <div class="row">
-            </div>
-            <div class="footer1-col-2">
-               <img src="{% static 'price_prediction/images/vegetables1.png' %}">
-                <p>Our purpose is to help you for vegetable price prediction.</p>
-            </div>
-            <div class="footer1-col-3">
-                <h3> Follow us</h3>
-              <ul>
-                <li> Facebook</li>
-                <li>Instagram</li>
-              </ul>
-            </div>
+      </div>
     </div>
-    <hr>
-    <p class="copyright">Copyright 2024 - AgroPrice</p>
-</div>
+    <hr />
+    <div class="footer1">
+      <div class="container">
+        <div class="row"></div>
+        <div class="footer1-col-2">
+          <img src="{% static 'price_prediction/images/vegetables1.png' %}" />
+          <p>Our purpose is to help you for vegetable price prediction.</p>
+        </div>
+        <div class="footer1-col-3">
+          <h3>Follow us</h3>
+          <ul>
+            <li>Facebook</li>
+            <li>Instagram</li>
+          </ul>
+        </div>
+      </div>
+      <hr />
+      <p class="copyright">Copyright 2024 - AgroPrice</p>
+    </div>
 
-<!--Js for toggle menu-->
-<script>
+    <!--Js for toggle menu-->
+  </body>
+  <script>
+    const form = document.getElementById("myForm");
+    const email = document.getElementById("email");
+    const message = document.getElementById("message");
+
+    // Show input error message
+    function showError(input, message, errorId) {
+      const small = document.getElementById(errorId);
+      small.innerText = message;
+      small.style.display = "block";
+    }
+
+    function hideError(errorId) {
+      const small = document.getElementById(errorId);
+      small.innerText = "";
+      small.style.display = "none";
+    }
+
+    // Show success outline
+    function showSuccess(input) {
+      // For simplicity, you can customize success styling as needed
+      input.classList.remove("error");
+      input.classList.add("success");
+    }
+
+    // Check email is valid
+    function checkEmail(input) {
+      const re =
+        /^(([^<>()\[\]\\.,;:\s@"]+(\.[^<>()\[\]\\.,;:\s@"]+)*)|(".+"))@((\[[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\])|(([a-zA-Z\-0-9]+\.)+[a-zA-Z]{2,}))$/;
+      if (re.test(input.value.trim())) {
+        showSuccess(input);
+        hideError("emailError");
+      } else {
+        showError(input, "Email is not valid", "emailError");
+      }
+    }
+
+    // Check required field (not empty)
+    function checkNonEmpty(input, errorId) {
+      if (input.value.trim() === "") {
+        showError(input, `${getFieldName(input)} cannot be empty`, errorId);
+      } else {
+        showSuccess(input);
+        hideError(errorId);
+      }
+    }
+
+    // Get field name
+    function getFieldName(input) {
+      return input.placeholder;
+    }
+
+    // Event listener
+    form.addEventListener("submit", function (e) {
+      // Check email format
+      checkEmail(email);
+
+      // Check message is not empty
+      checkNonEmpty(message, "messageError");
+
+      // Check both fields before allowing form submission
+      if (email.value.trim() === "" || message.value.trim() === "") {
+        e.preventDefault();
+        showError(
+          form,
+          "Please fill in all required fields before submitting.",
+          "formError"
+        );
+      } else {
+        // Remove the error message if both fields are filled
+        hideError("formError");
+      }
+    });
+
+    // Additional event listeners for real-time validation if needed
+    email.addEventListener("input", function () {
+      checkEmail(email);
+    });
+
+    message.addEventListener("input", function () {
+      checkNonEmpty(message, "messageError");
+    });
+
+    // Additional event listeners for real-time validation if needed
+    email.addEventListener("input", function () {
+      checkEmail(email);
+    });
+
+    message.addEventListener("input", function () {
+      checkNonEmpty(message, "messageError");
+    });
+
     var MenuItems = document.getElementById("MenuItems");
     MenuItems.style.maxHeight = "0px";
-    function menutoggle(){
-        if(MenuItems.style.maxHeight == "0px")
-        {
-            MenuItems.style.maxHeight = "200px"
-        }
-        else
-        {
-            MenuItems.style.maxHeight = "0px"
-        }
+    function menutoggle() {
+      if (MenuItems.style.maxHeight == "0px") {
+        MenuItems.style.maxHeight = "200px";
+      } else {
+        MenuItems.style.maxHeight = "0px";
+      }
     }
-</script>
-</body>
+  </script>
 </html>

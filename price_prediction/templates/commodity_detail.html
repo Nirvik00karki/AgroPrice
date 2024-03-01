@@ -22,13 +22,13 @@
                 <div class="mb-3">
                     <label for="commodity" class="form-label">Select Commodity:</label>
                     <select id="commodity" required></select>
-                    <div class="invalid-feedback">Commodity is required.</div>
+                    <span id="commodityError" style="color: red;"></span>
                 </div>
     
                 <div class="mb-3">
                     <label for="date" class="form-label">Select Date:</label>
                     <input type="date" id="date" required />
-                    <div class="invalid-feedback">Date is required.</div>
+                    <span id="dateError" style="color: red;"></span>
                 </div>
     
                 <div class="d-flex justify-content-between">
@@ -38,6 +38,25 @@
         </div>
 
       <script>
+        document.addEventListener("DOMContentLoaded", function () {
+          const dateInput = document.getElementById("date");
+
+        // Set the minimum date to today
+          const today = new Date();
+          const todayString = today.toISOString().split("T")[0];
+          dateInput.setAttribute("min", todayString);
+
+        // Add event listener to handle date changes
+          dateInput.addEventListener("input", function () {
+            const selectedDate = new Date(dateInput.value);
+            const currentDate = new Date();
+
+          // If the selected date is before today, reset to today
+            if (selectedDate < currentDate) {
+              dateInput.value = todayString;
+          }
+          });
+        });
         // Populate commodity dropdown on page load
         window.onload = function () {
           const commodityDropdown = document.getElementById("commodity");
@@ -59,21 +78,26 @@
 
         function predictAveragePrice() {
           const date = document.getElementById("date").value;
-          selectedCommodities = Array.from(
-            document.getElementById("commodity").selectedOptions
-          ).map((option) => option.value);
-
-          // Check if at least one commodity is selected
-          if (selectedCommodities.length === 0) {
-            console.error("Error: No commodity selected");
+          const dateError = document.getElementById("dateError");
+          const commodityError = document.getElementById("commodityError");
+          dateError.textContent = "";
+          commodityError.textContent = "";
+          if (!date) {
+            dateError.textContent = "Error: Please select a date";
             return;
           }
 
-          // Make AJAX request to Django backend to get commodity data
+          const selectedCommodities = Array.from(
+            document.getElementById("commodity").selectedOptions
+          ).map((option) => option.value);
+
+          if (selectedCommodities.length === 0) {
+            commodityError.textContent = "Error: Please select at least one commodity";
+            return;
+          }
           fetch(`/get_commodity_data/${JSON.stringify(selectedCommodities)}/`)
             .then((response) => response.json())
             .then((data) => {
-              // Process data and perform prediction for each commodity
               Object.entries(data.commodity_data).forEach(
                 ([commodity, commodityData]) => {
                   const input_data = {
@@ -81,8 +105,6 @@
                     commodity: commodity,
                     commodity_data: commodityData.average_price,
                   };
-
-                  // Make another AJAX request to Django backend for prediction
                   fetch("/api/predict/", {
                     method: "POST",
                     headers: {
@@ -92,7 +114,6 @@
                     body: JSON.stringify(input_data),
                   })
                     .then((response) => {
-                      // Check if the response is HTML
                       if (
                         response.headers
                           .get("content-type")
@@ -106,9 +127,7 @@
                       }
                     })
                     .then((data) => {
-                      // Check if data is a string (HTML response)
                       if (typeof data === "string") {
-                        // Assuming data is HTML content, you can update the DOM or handle it accordingly
                         document.body.innerHTML = data;
                       } else {
                         // Extract the predicted price from the response
