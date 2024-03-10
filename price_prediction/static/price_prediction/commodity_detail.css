@@ -1,37 +1,3 @@
-/* body {
-    font-family: "Arial", sans-serif;
-    margin: 0;
-    padding: 0;
-    background: radial-gradient(#fff,#ffffe0);
-}
-
-section {
-    max-width: 1000px;
-    margin: 2em auto;
-    padding: 1em;
-    background: white;
-    box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
-}
-
-.commodity-detail {
-    display: flex;
-    align-items: center;
-}
-
-.commodity-image img {
-    max-width: 100%;
-    height: auto;
-    margin-right: 20px;
-}
-
-.commodity-info h2 {
-    margin-top: 0;
-}
-
-.commodity-info p {
-    margin-bottom: 20px;
-} */
-
 /* Custom CSS for AgroPrice */
 body.bg-custom {
     font-family: 'Poppins', sans-serif;
@@ -57,7 +23,7 @@ h1 {
 }
 
 .predict-card {
-    background-color: #fff;
+    background-color: white;
     padding: 20px;
     border-radius: 8px;
     box-shadow: 0px 4px 6px rgba(0, 0, 0, 0.1);

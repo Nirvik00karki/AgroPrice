@@ -1,29 +1,23 @@
 from django.shortcuts import render,redirect
-# import matplotlib.pyplot as plt
-# import io
-# from io import BytesIO
-# from django.conf import settings
-# import base64
 from django.contrib.auth.decorators import login_required
 # from rest_framework import viewsets
 # from .models import HistoricalPrice
 # from .serializers import HistoricalPriceSerializer
 # from rest_framework.permissions import IsAuthenticated
 # from rest_framework.pagination import PageNumberPagination
+# from sklearn.linear_model import Ridge
+# from statsmodels.tsa.arima.model import ARIMA
+from .models import CustomUser
+# from sklearn.ensemble import GradientBoostingRegressor
 from django.http import JsonResponse
 import pandas as pd
 import numpy as np
-# import os
 import json
 from django.contrib.auth import authenticate, login, logout
 from django.contrib import messages
-from .models import CustomUser
 from datetime import datetime
-# from django.views.decorators.csrf import csrf_exempt
 from sklearn.metrics import mean_squared_error, r2_score
-# from sklearn.linear_model import SGDRegressor
 from sklearn.preprocessing import StandardScaler
-# from sklearn.pipeline import make_pipeline
 from .models import Review 
 from sklearn.model_selection import train_test_split
 
@@ -34,23 +28,11 @@ def home(request):
 def index(request):
     return render(request, 'index.html')
 
-
-# class HistoricalPriceViewSet(viewsets.ModelViewSet):
-#     queryset = HistoricalPrice.objects.all()
-#     serializer_class = HistoricalPriceSerializer
-#     permission_classes = [IsAuthenticated]
-#     pagination_class = PageNumberPagination
-
 def potato_detail(request):
     return render(request, 'potato.html')
 
 def commodity_detail(request):
     return render(request, 'commodity_detail.html')
-
-# def serve_overall_table():
-#     file_path = os.path.join(r'C:\Final year Project\AgroPrice\price_prediction\static\price_prediction', 'percent.csv')  # Update the path
-#     overall_table_data = pd.read_csv(file_path).to_dict(orient='records')
-#     return JsonResponse(overall_table_data, safe=False)
 
 def render_price_search(request):
     return render(request, 'pricesearch.html')
@@ -94,6 +76,14 @@ def user_logout(request):
     logout(request)
     return redirect('index') 
 
+def check_email(request):
+    if request.method == 'POST':
+        email = request.POST.get('email', None)
+        if email:
+            exists = CustomUser.objects.filter(email=email).exists()
+            return JsonResponse({'exists': exists})
+    return JsonResponse({'error': 'Invalid request'})
+    
 def get_commodities(request):
     df = pd.read_csv(r'C:\Users\nirvi\OneDrive\Desktop\Programs\Mlcurrent\first_merged_1.csv')
     commodities = df['Commodity'].unique().tolist()
@@ -151,8 +141,8 @@ def predict_average_price(request):
         if not selected_commodity:
             return JsonResponse({'error': 'No commodity selected'})
 
-        df = pd.read_csv(r'C:\Users\nirvi\OneDrive\Desktop\Programs\Mlcurrent\Splined_mock.csv')
-        # df=df.drop('Yearly_Trend', axis=1)
+        df = pd.read_csv(r'C:\Users\nirvi\OneDrive\Desktop\Programs\Mlcurrent\train1.csv')
+        # df.drop(columns=['Average'], inplace=True)
         df = df[df['Commodity'] == selected_commodity]
         if df.empty:
             return JsonResponse({'error': f'No data found for {selected_commodity}'})
@@ -180,10 +170,9 @@ def predict_average_price(request):
         coefficients = ridge_regression_fit(X_train, y_train, alpha=7.0)
         print("Shapes before prediction - X_test:", X_test.shape)
         y_pred = ridge_regression_predict(coefficients, X_test)     
-
+        # gb = GradientBoostingRegressor(n_estimators=100, learning_rate=0.1, max_depth=3, random_state=0)
         mse = mean_squared_error(y_test, y_pred)
         r2 = r2_score(y_test, y_pred)
-        
         try:
             selected_date = datetime.strptime(selected_date, '%Y-%m-%d').date()
         except ValueError:
@@ -204,17 +193,17 @@ def predict_average_price(request):
             'month': [int(previous_date.month)],
             'year': [int(previous_date.year)],
             'Season_Fall': [0], 
-            'Season_Spring': [0],
+            'Season_Spring': [1],
             'Season_Summer': [0],
-            'Season_Winter': [1],
-            'Apple_Jholey': [0],
-            'Banana': [0],
-            'Carrot_Local': [0],
-            'Cucumber_Local': [0],
-            'Garlic_Dry_Nepali': [0],
-            'Lettuce': [0],
-            'Onion_Dry_Indian': [0],
-            'Potato_White': [0],
+            'Season_Winter': [0],
+            'Apple_Jholey': [1],
+            'Banana': [1],
+            'Carrot_Local': [1],
+            'Cucumber_Local': [1],
+            'Garlic_Dry_Nepali': [1],
+            'Lettuce': [1],
+            'Onion_Dry_Indian': [1],
+            'Potato_White': [1],
             'Tomato_Big_Nepali': [1],
             'Festival_Buddha_Jayanti': [0],
             'Festival_Dashain': [0],
@@ -244,9 +233,9 @@ def predict_average_price(request):
             'Maghe_Sankranti_near': [0],
             'Shree_Panchami_near': [0],
             'Fall_near': [0],
-            'Spring_near': [0],
+            'Spring_near': [1],
             'Summer_near': [0],
-            'Winter_near': [1],
+            'Winter_near': [0],
             'Spline_Average_Lag1': [known_lag_value],
             'MA': [last_ma],
             'EMA': [last_ema],
@@ -262,6 +251,7 @@ def predict_average_price(request):
             # if not df1[df1['Date'] == previous_date.date()].empty:
             previous_date_features_scaled = scaler.transform(previous_date_features)
             previous_date_lag = ridge_regression_predict(coefficients, np.c_[np.ones(previous_date_features_scaled.shape[0]), previous_date_features_scaled])[0] 
+            # previous_date_lag = gb.predict(previous_date_features_scaled)[0]
             ma_window = 7
             ma_value = df[df['Commodity'] == selected_commodity]['Spline_Average'].rolling(window=ma_window, min_periods=1).mean().iloc[-1]
 
@@ -275,11 +265,11 @@ def predict_average_price(request):
                 'month': [int(previous_date.month)],
                 'year': [int(previous_date.year)],
                 'Season_Fall': [0], 
-                'Season_Spring': [0],
+                'Season_Spring': [1],
                 'Season_Summer': [0],
-                'Season_Winter': [1],
-                'Apple_Jholey': [0],
-                'Banana': [0],
+                'Season_Winter': [0],
+                'Apple_Jholey': [1],
+                'Banana': [1],
                 'Carrot_Local': [1],
                 'Cucumber_Local': [1],
                 'Garlic_Dry_Nepali': [1],
@@ -315,20 +305,14 @@ def predict_average_price(request):
                 'Maghe_Sankranti_near': [0],
                 'Shree_Panchami_near': [0],
                 'Fall_near': [0],
-                'Spring_near': [0],
+                'Spring_near': [1],
                 'Summer_near': [0],
-                'Winter_near': [1],
+                'Winter_near': [0],
                 'Spline_Average_Lag1': [previous_date_lag],
                 'MA': [ma_value],
                 'EMA': [ema_value],
                 'day': [int(previous_date.day)],
                 'Week': [int(previous_date.isocalendar().week)],
-                # 'EMA' : [df1['Average'].ewm(span=15, adjust=False).mean().iloc[-1]],
-                # 'EMA': [ema],
-                # 'Yearly_Trend' : [last_yearly_trend],
-                # 'week': [previous_date.isocalendar().week],
-                # 'Week_sin':[np.cos(2 * np.pi * previous_date.isocalendar().week / 52)],
-                # 'Week_cos':[np.cos(2 * np.pi * previous_date.isocalendar().week / 52)],
             })
 
             previous_date_features = previous_date_features.values.reshape(1, -1)
@@ -338,17 +322,17 @@ def predict_average_price(request):
             'month': [int(selected_date.month)],
             'year': [int(selected_date.year)],
             'Season_Fall': [0], 
-            'Season_Spring': [0],
+            'Season_Spring': [1],
             'Season_Summer': [0],
-            'Season_Winter': [1],
-            'Apple_Jholey': [0],
-            'Banana': [0],
-            'Carrot_Local': [0],
-            'Cucumber_Local': [0],
-            'Garlic_Dry_Nepali': [0],
-            'Lettuce': [0],
-            'Onion_Dry_Indian': [0],
-            'Potato_White': [0],
+            'Season_Winter': [0],
+            'Apple_Jholey': [1],
+            'Banana': [1],
+            'Carrot_Local': [1],
+            'Cucumber_Local': [1],
+            'Garlic_Dry_Nepali': [1],
+            'Lettuce': [1],
+            'Onion_Dry_Indian': [1],
+            'Potato_White': [1],
             'Tomato_Big_Nepali': [1],
             'Festival_Buddha_Jayanti': [0],
             'Festival_Dashain': [0],
@@ -378,17 +362,14 @@ def predict_average_price(request):
             'Maghe_Sankranti_near': [0],
             'Shree_Panchami_near': [0],
             'Fall_near': [0],
-            'Spring_near': [0],
+            'Spring_near': [1],
             'Summer_near': [0],
-            'Winter_near': [1],
+            'Winter_near': [0],
             'Spline_Average_Lag1': [previous_date_lag],
             'MA': [ma_value],
             'EMA': [ema_value],
             'day': [int(selected_date.day)],
             'Week': [int(selected_date.isocalendar().week)],
-            # 'week': [selected_date.isocalendar().week],
-            # 'Week_sin':[np.cos(2 * np.pi * selected_date.isocalendar().week / 52)],
-            # 'Week_cos':[np.cos(2 * np.pi * selected_date.isocalendar().week / 52)],
         })
 
         selected_date_features = selected_date_features.values.reshape(1, -1)
@@ -398,13 +379,13 @@ def predict_average_price(request):
         # selected_date_features_with_bias = np.c_[np.ones(selected_date_features.shape[0]), selected_date_features]
         # print("Selected Date Features with Bias:", selected_date_features_scaled_with_bias)
         prediction = ridge_regression_predict(coefficients, selected_date_features_scaled_with_bias)
-        # prediction = ridge_model.predict(selected_date_features)
+        # prediction = gb.predict(selected_date_features_scaled)
         print("Raw Prediction:", prediction)
         predicted_average_price = prediction[0]
         print("Predicted Price:", predicted_average_price)
         context = {
             'predicted_price': predicted_average_price,
-            'predicted_prices': json.dumps(list(np.exp(y_pred))),
+            # 'predicted_prices': json.dumps(list(np.exp(y_pred))),
             #'actual_prices': json.dumps(actual_prices),
             'mse': mse,
             'r2': r2,

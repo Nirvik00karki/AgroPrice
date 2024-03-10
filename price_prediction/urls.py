@@ -20,6 +20,7 @@ urlpatterns = [
     path('login/', views.user_login, name='login'),
     path('register/', views.register, name='register'),
     path('logout/', views.user_logout, name='logout'),
+    path('check_email/', views.check_email, name='check_email'),
     path('home/commodity_detail/', views.commodity_detail, name='commodity_detail'),
     path('api/predict/', views.predict_average_price, name='predict_average_price'),
     path('get_commodities/', views.get_commodities, name='get_commodities'),

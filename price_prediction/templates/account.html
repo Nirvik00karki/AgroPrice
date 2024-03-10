@@ -1,164 +1,355 @@
 {% load static %}
 <!DOCTYPE html>
 <html lang="en">
-<head>
-    <meta charset="UTF-8">
-    <meta http-equiv="X-UA-Compatible" content="IE=edge">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <head>
+    <meta charset="UTF-8" />
+    <meta http-equiv="X-UA-Compatible" content="IE=edge" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <title>AgroPrice</title>
-    <link rel="stylesheet" href="{% static 'price_prediction/index.css' %}">
-</head>
-<body>
-<header>
-    {% include "navbar.html" %}
-</header>
-<div class="account-page">
-    <div class="container">
-        <div class="row">
-            <div class="col-2">
-                <img src="{% static 'price_prediction/images/ac.png' %}" width="120%">
-            </div>
-            <div class="col-2">
-                <div class="form-container">
-                    <div class="form-btn">
-                        <span onclick="login()">Login</span>
-                        <span onclick="register()">Register</span>
-                        <hr id="Indicator">
-                    </div>
-                    <form id="LoginForm" method="post" action="{% url 'login' %}" onsubmit="return validateLoginForm()">
-                        {% csrf_token %}
-                        <input type="text" placeholder="Username" name="username">
-                        <input type="password" placeholder="Password" name="password">
-                        <button type="submit" class="btn">Login</button>
-                    </form>
-                    <form id="RegForm" method="post" action="{% url 'register' %}" onsubmit="return validateRegForm()">
-                        {% csrf_token %}
-                        <input type="text" placeholder="Username" name="username">
-                        <input type="email" placeholder="Email" name="email">
-                        <input type="password" placeholder="Password" name="password">
-                        <button type="submit" class="btn">Register</button>
-                        <!-- Error messages -->
-                        <small id="registerUsernameError" class="error"></small>
-                        <small id="registerEmailError" class="error"></small>
-                        <small id="registerPasswordError" class="error"></small>
-                    </form>
-                </div>
-            </div>
+    <style>
+      .navbar {
+        display: flex;
+        align-items: center;
+        padding: 20px;
+        background-image: radial-gradient(#fff, #ffd6d6);
+      }
+      .account-page {
+        padding: 100px;
+        background: radial-gradient(#fff, #ffd6d6);
+        display: flex; /* Added display flex */
+        justify-content: flex-end; /* Align content to right side */
+        align-items: center; /* Added align-items to center vertically */
+      }
+
+      /* Image column styles */
+      .col-2 {
+        width: 40%; /* Adjusted width for better layout */
+        padding: 20px 0;
+      }
+
+      /* Form container styles */
+      .form-container {
+        max-width: 400px;
+        max-height: 600px;
+        padding: 20px;
+        background-color: #fff;
+        border-radius: 5px;
+        box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+        margin: 0 auto; /* Removed any unintended positioning */
+      }
+
+      /* Form container content styles */
+      .form-container span {
+        font-weight: bold;
+        padding: 0 10px;
+        color: #555;
+        cursor: pointer;
+        width: 100px;
+        display: inline-block;
+      }
+
+      .form-btn {
+        display: inline-block;
+      }
+
+      form input,
+      form button {
+        width: 100%;
+        height: 30px;
+        margin: 10px 0;
+        padding: 0 10px;
+        border: 1px solid #ccc;
+      }
+
+      form .btn {
+        border: none;
+        cursor: pointer;
+      }
+
+      form .btn:focus {
+        outline: none;
+      }
+
+      #LoginForm {
+        left: 0; /* Removed unintended positioning */
+      }
+
+      #RegForm {
+        left: 0; /* Removed unintended positioning */
+      }
+
+      form a {
+        font-size: 12px;
+      }
+
+      #Indicator {
+        width: 100px;
+        border: none;
+        background: #ff523b;
+        height: 3px;
+        margin-top: 8px;
+        transform: translateX(100px);
+        transition: transform 1s;
+      }
+
+      /* Error Message */
+      .error {
+        color: red;
+        font-size: 12px;
+      }
+      /* Media Query for less than 600 screen size */
+      @media only screen and (max-width: 600px) {
+        .row {
+          text-align: center;
+        }
+
+        .col-2,
+        .col-3,
+        .col-4 {
+          flex-basis: 100%;
+        }
+
+        .single-product .row {
+          text-align: left;
+        }
+
+        .single-product .col-2 {
+          padding: 20px 0;
+        }
+
+        .single-product h1 {
+          font-size: 26px;
+          line-height: 32px;
+        }
+
+        .cart-info p {
+          display: none;
+        }
+      }
+      .footer {
+        background-color: #201f1f;
+        display: flex;
+        align-items: center;
+        flex-direction: column;
+        gap: 25px;
+        color: #fff !important;
+        justify-content: center;
+        padding: 25px;
+      }
+      .footer * {
+        color: #fff !important;
+        text-align: center;
+        list-style: none;
+      }
+      .footer-col-4 {
+        display: flex;
+        gap: 15px;
+        flex-direction: column;
+        text-align: center;
+        align-items: center;
+      }
+      .hide {
+        display: none;
+      }
+    </style>
+  </head>
+  <body>
+    <header>
+      {% include "navbar.html" %}
+      <!-- <div class="navbar">
+        <div class="logo">
+          <a href="/"
+            ><img
+              src="{% static 'price_prediction/images/vegetables1.png' %}"
+              width="125px"
+          /></a>
         </div>
+        <nav>
+          <ul id="MenuItems">
+            <li><a href="/">Home</a></li>
+            {% if not user.is_authenticated %}
+            <li><a href="/account/">Account</a></li>
+            {% endif %} {% if user.is_authenticated %}
+            <li><a href="/home/">Dashboard</a></li>
+            {% endif %}
+            <li><a href="/prices/">Prices</a></li>
+          </ul>
+        </nav>
+        <img
+          src="{% static 'price_prediction/images/vegetables1.png' %}"
+          class="menu-icon"
+          onclick="menutoggle()"
+        />
+      </div> -->
+    </header>
+    <div class="account-page">
+      <div class="container">
+        <div class="row">
+          <div class="col-2">
+            <img
+              src="{% static 'price_prediction/images/ac.png' %}"
+              width="120%"
+            />
+          </div>
+          <div class="col-2">
+            <div class="form-container">
+              <div class="form-btn">
+                <span onclick="login()">Login</span>
+                <span onclick="register()">Register</span>
+                <hr id="Indicator" />
+              </div>
+              <form
+                id="LoginForm"
+                method="post"
+                action="{% url 'login' %}"
+                onsubmit="return validateLoginForm()"
+                class="hide"
+              >
+                {% csrf_token %}
+                <input type="text" placeholder="Username" name="username" />
+                <input type="password" placeholder="Password" name="password" />
+                <button type="submit" class="btn">Login</button>
+              </form>
+              <form
+                id="RegForm"
+                method="post"
+                action="{% url 'register' %}"
+                onsubmit="return validateRegForm()"
+              >
+                {% csrf_token %}
+                <input type="text" placeholder="Username" name="username" />
+                <input type="email" placeholder="Email" name="email" />
+                <input type="password" placeholder="Password" name="password" />
+                <button type="submit" class="btn">Register</button>
+                <!-- Error messages -->
+                <small id="registerUsernameError" class="error"></small>
+                <small id="registerEmailError" class="error"></small>
+                <small id="registerPasswordError" class="error"></small>
+              </form>
+            </div>
+          </div>
+        </div>
+      </div>
     </div>
-</div>
-<div class="footer">
-    <div class="container">
+    <div class="footer">
+      <div class="container">
         <div class="footer-col-2">
-            <img src="{% static 'price_prediction/images/vegetables1.png' %}">
-            <p>Our purpose is to help you for vegetable price prediction.</p>
+          <img
+            src="{% static 'price_prediction/images/vegetables1.png' %}"
+            style="width: 90px; margin-bottom: 50px"
+          />
+          <p>Our purpose is to help you for vegetable price prediction.</p>
         </div>
         <div class="footer-col-4">
-            <h3>Follow us</h3>
-            <ul>
-                <li>Facebook</li>
-                <li>Instagram</li>
-            </ul>
+          <h3>Follow us</h3>
+          <ul>
+            <li>Facebook</li>
+            <li>Instagram</li>
+          </ul>
         </div>
+      </div>
+      <hr />
+      <p class="copyright">Copyright 2024 - AgroPrice</p>
     </div>
-    <hr>
-    <p class="copyright">Copyright 2024 - AgroPrice</p>
-</div>
 
-<!-- JavaScript for toggle menu -->
-<script>
-    var MenuItems = document.getElementById("MenuItems");
-    MenuItems.style.maxHeight = "0px";
-    function menutoggle(){
-        if(MenuItems.style.maxHeight == "0px")
-        {
-            MenuItems.style.maxHeight = "200px"
+    JavaScript for toggle menu
+    <script>
+      var MenuItems = document.getElementById("MenuItems");
+      MenuItems.style.maxHeight = "0px";
+      function menutoggle() {
+        if (MenuItems.style.maxHeight == "0px") {
+          MenuItems.style.maxHeight = "200px";
+        } else {
+          MenuItems.style.maxHeight = "0px";
         }
-        else
-        {
-            MenuItems.style.maxHeight = "0px"
-        }
-    }
-</script>
+      }
+    </script>
 
-<!-- JavaScript for toggle Form -->
-<script>
-    var LoginForm = document.getElementById("LoginForm");
-    var RegForm = document.getElementById("RegForm");
-    var Indicator = document.getElementById("Indicator");
-    function register()
-    {
+    <!-- JavaScript for toggle Form -->
+    <script>
+      var LoginForm = document.getElementById("LoginForm");
+      var RegForm = document.getElementById("RegForm");
+      var Indicator = document.getElementById("Indicator");
+      function register() {
         RegForm.style.transform = "translateX(0px)";
-        LoginForm.style.transform = "translateX(0px)";
-        Indicator.style.transform = "translateX(100px)";
-    }
-    function login()
-    {
-        RegForm.style.transform = "translateX(300px)";
         LoginForm.style.transform = "translateX(300px)";
+        Indicator.style.transform = "translateX(100px)";
+        RegForm.style.display = "block"; // Show the registration form
+        LoginForm.style.display = "none"; // Hide the login form
+      }
+
+      function login() {
+        RegForm.style.transform = "translateX(300px)";
+        LoginForm.style.transform = "translateX(0px)";
         Indicator.style.transform = "translateX(0px)";
-    }
-    function validateLoginForm() {
+        RegForm.style.display = "none"; // Hide the registration form
+        LoginForm.style.display = "block"; // Show the login form
+      }
+      function validateLoginForm() {
         const username = document.forms["LoginForm"]["username"].value.trim();
         const password = document.forms["LoginForm"]["password"].value.trim();
 
         if (username === "" || password === "") {
-            alert("Please fill in all fields");
-            return false;
+          alert("Please fill in all fields");
+          return false;
         }
 
         return true;
-    }
+      }
 
-    function validateRegForm() {
+      function checkEmailExists(email) {
+        return fetch("/check_email/", {
+          method: "POST",
+          headers: {
+            "Content-Type": "application/json",
+            "X-CSRFToken": getCookie("csrftoken"),
+          },
+          body: JSON.stringify({ email: email }),
+        })
+          .then((response) => {
+            if (!response.ok) {
+              throw new Error("Network response was not ok");
+            }
+            return response.json();
+          })
+          .then((data) => {
+            return data.exists;
+          })
+          .catch((error) => {
+            console.error("Error: ", error);
+            return false;
+          });
+      }
+      function validateRegForm() {
         const username = document.forms["RegForm"]["username"].value.trim();
         const email = document.forms["RegForm"]["email"].value.trim();
         const password = document.forms["RegForm"]["password"].value.trim();
 
         if (username === "" || email === "" || password === "") {
-            alert("Please fill in all fields");
-            return false;
+          alert("Please fill in all fields");
+          return false;
         }
-        const isEmailTaken = checkEmailExists(email);
-        if (isEmailTaken) {
-            alert("Email is already taken");
-            return false;
-        }
-
-        alert("Successfully Registered");
-        return true;
-    }
-    function checkEmailExists(email) {
-        return fetch('/check_email/', {
-            method: 'POST',
-            headers: {
-                'Content-Type': 'application/json',
-                'X-CSRFToken': getCookie('csrftoken') // Include CSRF token
-            },
-            body: JSON.stringify({ email: email })
-        })
-        .then(response => {
-            if (!response.ok) {
-                throw new Error('Network response was not ok');
+        return checkEmailExists(email)
+          .then((isEmailTaken) => {
+            if (isEmailTaken) {
+              alert("Email is already taken");
+              return false;
             }
-            return response.json();
-        })
-        .then(data => {
-            return data.exists;
-        })
-        .catch(error => {
-            console.error('Error: ', error);
-            return false;
-        });
-    }
 
-    // Function to get CSRF token from cookies
-    function getCookie(name) {
+            alert("Successfully Registered");
+            return true;
+          })
+          .catch((error) => {
+            console.error("Error checking email:", error);
+            return false;
+          });
+      }
+      // Function to get CSRF token from cookies
+      function getCookie(name) {
         const value = `; ${document.cookie}`;
         const parts = value.split(`; ${name}=`);
-        if (parts.length === 2) return parts.pop().split(';').shift();
-    }
-</script>
-
-</body>
+        if (parts.length === 2) return parts.pop().split(";").shift();
+      }
+    </script>
+  </body>
 </html>

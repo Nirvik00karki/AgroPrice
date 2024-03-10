@@ -1,5 +1,5 @@
-{% load static %}
 <!DOCTYPE html>
+{% load static %}
 <html lang="en">
   <head>
     <meta charset="UTF-8" />
@@ -10,6 +10,12 @@
       href="{% static 'price_prediction/analysis.css' %}"
     />
     <style>
+      body {
+        font-family: "Arial", sans-serif;
+        background-color: #f5f5f5;
+        margin: 0;
+        padding: 0;
+      }
       .analysis-container {
         max-width: 1000px;
         margin: 20px auto;
@@ -35,6 +41,29 @@
         margin-left: auto;
         margin-right: auto;
       }
+      .introduction-container {
+        background-color: #f9f9f9;
+        border-radius: 10px;
+        padding: 20px;
+        margin-bottom: 20px;
+        box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+      }
+
+      .introduction-container h1 {
+        color: #333;
+        font-size: 24px;
+        margin-bottom: 10px;
+      }
+
+      .introduction-container p {
+        color: #666;
+        font-size: 16px;
+        line-height: 1.5;
+      }
+
+      .introduction-container p:first-child {
+        margin-top: 0;
+      }
     </style>
   </head>
 
@@ -49,9 +78,21 @@
         </div>
         <button class="button" onclick="loadAnalysis()">Load Analysis</button>
       </div>
-
+      <div class="introduction-container">
+        <h1>Welcome to the Commodity Analysis Page</h1>
+        <p>
+          Here, You can explore trends, seasonality, and other factors
+          influencing commodity prices.
+        </p>
+        <p>
+          Use the dropdown menu to select a commodity, then click "Load
+          Analysis" to view the charts.
+        </p>
+      </div>
       <h2 id="analysis-header" hidden>
-        Analysis for Commodity:<span id="selected-commodity">{{ commodity }}</span>
+        Analysis for Commodity:<span id="selected-commodity"
+          >{{ commodity }}</span
+        >
       </h2>
 
       <!-- <div class="plot-container" id="actual-vs-predicted-container"> -->
@@ -67,7 +108,9 @@
         id="average-seasons-container"
         style="width: 100%"
       >
-        <h3 id="chartheader1" hidden>1.Average Price vs Seasons Over 2023 and 2024</h3>
+        <h3 id="chartheader1" hidden>
+          1.Average Price vs Seasons Over 2023 and 2024
+        </h3>
         <canvas id="average-seasons-plot"></canvas>
       </div>
       <div
@@ -75,7 +118,9 @@
         id="average-year-container"
         style="width: 100%"
       >
-        <h3 id="chartheader2" hidden>2.Price of the commodity over the years</h3>
+        <h3 id="chartheader2" hidden>
+          2.Price of the commodity over the years
+        </h3>
         <canvas id="average-year-plot"></canvas>
       </div>
       <div

@@ -29,6 +29,9 @@
     /* .default{
         background: radial-gradient(#f0fff0, lightyellow);
     } */
+      .item2 {
+        text-align: center !important;
+      }
       .footer1 {
         background: #2c2a2a;
         font-size: 14px;
@@ -36,7 +39,6 @@
       }
       .services {
         background-color: radial-gradient(#fff, #ffd6d6);
-        padding: 50px 0;
       }
 
       .services .row {
@@ -51,19 +53,24 @@
       }
 
       .services img {
-        width: 200px;
-        height: 200px;
-        object-fit: cover;
+        width: 100% !important;
+        aspect-ratio: 1/1 !important;
+        object-fit: cover !important;
         margin-bottom: 20px;
-        border: 1px solid white;
-        border-radius: 10px;
       }
 
       .review-form {
         background-color: radial-gradient(#fff, #ffd6d6);
         padding: 50px 0;
       }
-
+      .d-flexilble {
+        display: grid;
+        grid-template-columns: repeat(2, 1fr);
+        gap: 35px;
+        padding-left: 25px;
+        padding-right: 25px;
+        align-items: center;
+      }
       .review-form .row {
         display: flex;
         justify-content: space-around;
@@ -114,6 +121,9 @@
         text-align: center;
         color: aliceblue;
       }
+      .border-card {
+        box-shadow: rgba(100, 100, 111, 0.2) 0px 7px 29px 0px !important;
+      }
     </style>
   </head>
   <body>
@@ -126,11 +136,19 @@
               <h1>Agro Price</h1>
               <br />
               <p>Vegetable Price Prediction System.</p>
-              <a 
-              {% if not user.is_authenticated %}
-              href="/login/"
-              {% endif %}
-                class="btn">Explore Now &#8594;</a>
+              <a
+                {%
+                if
+                not
+                user.is_authenticated
+                %}
+                href="/login/"
+                {%
+                endif
+                %}
+                class="btn"
+                >Explore Now &#8594;</a
+              >
             </div>
             <div class="col-2">
               <img src="{% static 'price_prediction/images/vege.png' %}" />
@@ -140,7 +158,7 @@
         <hr />
         <div class="container services">
           <div class="row">
-            <div class="col-4">
+            <div class="col-4 border-card">
               <img
                 src="{% static 'price_prediction/images/pre7.png' %}"
                 alt="Real-Time Market Data Updates"
@@ -148,7 +166,7 @@
               <h3><b>Real-Time Market Data Updates</b></h3>
               <p><b>Stay informed with up-to-day updates.</b></p>
             </div>
-            <div class="col-4">
+            <div class="col-4 border-card">
               <img
                 src="{% static 'price_prediction/images/pre6.jpeg' %}"
                 alt="Predictive Analytics Insight"
@@ -156,7 +174,7 @@
               <h3><b>Predictive Analytics Insight</b></h3>
               <p><b>Gain valuable insights for decision making.</b></p>
             </div>
-            <div class="col-4">
+            <div class="col-4 border-card">
               <img
                 src="{% static 'price_prediction/images/pre5.jpg' %}"
                 alt="Market Price Trend Visualization"
@@ -168,8 +186,8 @@
         </div>
         <hr />
         <div class="container review-form">
-          <div class="row">
-            <div class="col-6">
+          <div class="d-flexilble">
+            <div class="item2">
               <h2><i>Leave a Review</i></h2>
               <p>
                 <b
@@ -178,15 +196,29 @@
                 >
               </p>
             </div>
-            <div class="col-6">
-                <form id="myForm">
-                    <input type="text" id="name" placeholder="Name">             
-                    <input type="email" id="email" placeholder="Email">
-                    <small style="color: #ff523b;" id="emailError" class="error-message"></small>            
-                    <textarea id="message" placeholder="Message"></textarea>
-                    <small style="color: #ff523b" id="messageError" class="error-message"></small>     
-                    <button type="submit">Submit</button>
-                </form>
+            <div class="item1">
+              <form id="myForm" method="post">
+                {% csrf_token %}
+                <input type="text" id="name" name="name" placeholder="Name" />
+                <input type="email" id="email" name="email" placeholder="Email" />
+                <small
+                  style="color: #ff523b"
+                  id="emailError"
+                  class="error-message"
+                ></small>
+                <textarea
+                  id="message"
+                  placeholder="Message"
+                  rows="6"
+                  name="message"
+                ></textarea>
+                <small
+                  style="color: #ff523b"
+                  id="messageError"
+                  class="error-message"
+                ></small>
+                <button type="submit">Submit</button>
+              </form>
             </div>
           </div>
         </div>
@@ -211,8 +243,6 @@
       <hr />
       <p class="copyright">Copyright 2024 - AgroPrice</p>
     </div>
-
-    <!--Js for toggle menu-->
   </body>
   <script>
     const form = document.getElementById("myForm");
@@ -246,8 +276,9 @@
       if (re.test(input.value.trim())) {
         showSuccess(input);
         hideError("emailError");
+        return true;
       } else {
-        showError(input, "Email is not valid", "emailError");
+        return false;
       }
     }
 
@@ -255,9 +286,11 @@
     function checkNonEmpty(input, errorId) {
       if (input.value.trim() === "") {
         showError(input, `${getFieldName(input)} cannot be empty`, errorId);
+        return false;
       } else {
         showSuccess(input);
         hideError(errorId);
+        return true;
       }
     }
 
@@ -268,33 +301,32 @@
 
     // Event listener
     form.addEventListener("submit", function (e) {
+      let isValid = true;
+
       // Check email format
-      checkEmail(email);
+      if (!checkEmail(email)) {
+        isValid = false;
+      }
 
       // Check message is not empty
-      checkNonEmpty(message, "messageError");
+      if (!checkNonEmpty(message, "messageError")) {
+        isValid = false;
+      }
 
       // Check both fields before allowing form submission
-      if (email.value.trim() === "" || message.value.trim() === "") {
+      if (!isValid) {
         e.preventDefault();
         showError(
           form,
-          "Please fill in all required fields before submitting.",
+          "Please fill in all required fields correctly before submitting.",
           "formError"
         );
       } else {
         // Remove the error message if both fields are filled
         hideError("formError");
       }
-    });
-
-    // Additional event listeners for real-time validation if needed
-    email.addEventListener("input", function () {
-      checkEmail(email);
-    });
-
-    message.addEventListener("input", function () {
-      checkNonEmpty(message, "messageError");
+      alert("Review Saved");
+      form.reset();
     });
 
     // Additional event listeners for real-time validation if needed

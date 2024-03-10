@@ -12,29 +12,35 @@
         background: #f5f5f5; /* Light gray background */
       }
 
+      .container {
+        max-width: 800px;
+        margin: 0 auto;
+        padding: 20px;
+        background-color: #fff;
+        box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+        border-radius: 5px;
+      }
+
       h1 {
         text-align: center;
         color: #333;
         margin-bottom: 20px;
+        font-size: 28px;
+        text-transform: uppercase;
       }
 
-      .container {
-        max-width: 1000px;
-        margin: 0 auto;
-        padding: 20px;
-        background-color: #fff;
-        box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
-        border-radius: 5px;
+      label {
+        font-weight: bold;
       }
 
       input[type="text"],
       input[type="date"],
       button {
         margin: 5px;
-        padding: 8px;
+        padding: 10px;
         font-size: 14px;
-        border: 1px solid #ddd;
-        border-radius: 3px;
+        border: none;
+        border-radius: 5px;
       }
 
       input[type="text"],
@@ -60,22 +66,31 @@
       table {
         width: 100%;
         border-collapse: collapse;
+        box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
       }
 
       th,
       td {
         border: 1px solid #ddd;
-        padding: 10px;
+        padding: 12px;
         text-align: left;
       }
 
       th {
         background-color: #4caf50;
         color: white;
+        text-transform: uppercase;
       }
 
       tr:nth-child(even) {
         background-color: #f2f2f2;
+      }
+
+      @media screen and (max-width: 600px) {
+        input[type="text"],
+        input[type="date"] {
+          width: calc(100% - 20px);
+        }
       }
     </style>
   </head>
@@ -92,7 +107,7 @@
       <br /><br />
       <label for="dateInput">Select Date:</label>
       <input type="date" id="dateInput" />
-      <button onclick="searchCommodity()">Search</button>
+      <button onclick="searchCommodity()" value="Search">Search</button>
       <br /><br />
       <div id="result"></div>
     </div>
@@ -110,7 +125,6 @@
           console.log(data);
         });
     }
-
     function searchCommodity() {
       const searchValue = document
         .getElementById("searchInput")
@@ -138,12 +152,16 @@
     }
 
     function displayResult(result) {
+      if (result.length === 0) {
+        html = "<p>Commodity Unavailable For That Date</p>";
+      }
       let html =
         '<table border="1"><tr><th>Commodity</th><th>Date</th><th>Unit</th><th>Minimum</th><th>Maximum</th><th>Average</th></tr>';
       result.forEach((row) => {
         html += `<tr><td>${row["Commodity"]}</td><td>${row["Date"]}</td><td>${row["Unit"]}</td><td>${row["Minimum"]}</td><td>${row["Maximum"]}</td><td>${row["Average"]}</td></tr>`;
       });
       html += "</table>";
+
       document.getElementById("result").innerHTML = html;
     }
 
