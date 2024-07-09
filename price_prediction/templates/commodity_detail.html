@@ -41,12 +41,9 @@
         document.addEventListener("DOMContentLoaded", function () {
           const dateInput = document.getElementById("date");
 
-        // Set the minimum date to today
           const today = new Date();
           const todayString = today.toISOString().split("T")[0];
           dateInput.setAttribute("min", todayString);
-
-        // Add event listener to handle date changes
           dateInput.addEventListener("input", function () {
             const selectedDate = new Date(dateInput.value);
             const currentDate = new Date();

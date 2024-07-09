@@ -197,7 +197,7 @@
               </p>
             </div>
             <div class="item1">
-              <form id="myForm" method="post">
+              <form id="myForm" method="post" action="{% url 'submit_review' %}">
                 {% csrf_token %}
                 <input type="text" id="name" name="name" placeholder="Name" />
                 <input type="email" id="email" name="email" placeholder="Email" />
@@ -348,4 +348,9 @@
       }
     }
   </script>
+  {% if review_saved %}
+  <script>
+      alert("Review saved successfully");
+  </script>
+  {% endif %}
 </html>

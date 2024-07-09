@@ -1,4 +1,4 @@
-from django.shortcuts import render,redirect
+from django.shortcuts import render,redirect, HttpResponse
 from django.contrib.auth.decorators import login_required
 # from rest_framework import viewsets
 # from .models import HistoricalPrice
@@ -169,7 +169,7 @@ def predict_average_price(request):
 
         coefficients = ridge_regression_fit(X_train, y_train, alpha=7.0)
         print("Shapes before prediction - X_test:", X_test.shape)
-        y_pred = ridge_regression_predict(coefficients, X_test)     
+        y_pred = ridge_regression_predict(coefficients, X_test)
         # gb = GradientBoostingRegressor(n_estimators=100, learning_rate=0.1, max_depth=3, random_state=0)
         mse = mean_squared_error(y_test, y_pred)
         r2 = r2_score(y_test, y_pred)
@@ -573,5 +573,5 @@ def submit_review(request):
         message = request.POST.get('message')
         review = Review.objects.create(name=name, email=email, message=message)
         review.save()
-        return redirect('index')
-    return render(request, 'index.html')
+        review_saved = True
+    return render(request, 'index.html', {'review_saved': review_saved})
