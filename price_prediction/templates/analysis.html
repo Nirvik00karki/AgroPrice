@@ -1,0 +1,168 @@
+{% load static %}
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Analysis - {{ commodity }}</title>
+    <link
+      rel="stylesheet"
+      href="{% static 'price_prediction/analysis.css' %}"
+    />
+    <style>
+      body {
+        font-family: "Arial", sans-serif;
+        background-color: #f8f9fa; /* Light gray background color */
+        margin: 0;
+        padding: 0;
+      }
+
+      h2 {
+        color: #343a40; /* Dark text color for headers */
+      }
+
+      .analysis-container {
+        max-width: 1000px;
+        margin: 20px auto;
+        background-color: white;
+        padding: 20px;
+        border-radius: 8px;
+        box-shadow: 0 0 10px rgba(0, 0, 0, 0.1); /* Box shadow for a subtle elevation effect */
+      }
+      #festival-analysis,
+      #seasons-analysis{
+        padding:20px;
+      }
+      .dropdown-container {
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        margin-bottom: 20px;
+      }
+
+      .dropdown {
+        padding: 10px;
+        border: 1px solid #ced4da; /* Border color for dropdown */
+        border-radius: 4px;
+        background-color: white;
+        color: #495057; /* Text color for dropdown */
+      }
+
+      .button {
+        padding: 10px 15px;
+        border: none;
+        border-radius: 4px;
+        background-color: #007bff; /* Primary button color */
+        color: white;
+        cursor: pointer;
+      }
+
+      .button:hover {
+        background-color: #0056b3; /* Button color on hover */
+      }
+
+      .plot-container {
+        margin-top: 20px;
+      }
+
+      .plot-container img {
+        width: 100%;
+        max-width: 800px;
+        height: auto;
+        display: block;
+        margin: 0 auto;
+        border-radius: 8px;
+        box-shadow: 0 0 10px rgba(0, 0, 0, 0.1); /* Box shadow for images */
+      }
+
+      .plot-container p {
+        margin-top: 10px;
+        text-align: justify;
+      }
+
+      /* Responsive design for smaller screens */
+      @media (max-width: 600px) {
+        .analysis-container {
+          max-width: 100%;
+          margin: 10px;
+        }
+
+        .plot-container img {
+          max-width: 100%;
+          height: auto;
+        }
+      }
+    </style>
+  </head>
+
+  <body>
+    {% include 'navbar.html' %}
+
+    <div class="analysis-container">
+      <div>
+        <a href="/analysis_view2/"
+          ><button class="button">Analysis For Specific Commodity</button></a
+        >
+      </div>
+      <div class="plot-container" id="analysis-seasons-container">
+        <h3>Heapmap showing price fluctuation of Commodities Based on Season</h3><br>
+        <img
+          style="margin: 0 auto;"
+          id="seasons-image"
+          src="{% static 'price_prediction/images/heatmap.png' %}"
+          alt="Seasons Heatmap"
+        /><br />
+        <div id="seasons-analysis">
+          <p>
+            Price fluctuation of Commodities on the basis of Seasons:<br><br>
+            1.Prices tend to be higher in the winter season (December to February) for
+            most commodities. This is likely due to factors such as decreased production 
+            due to colder weather. For example, the price of apples increases by 20% in winter,
+            while the price of carrots nearly doubles. <br><br>
+            2.Prices tend to be lower in the monsoon season (June to
+            August) for most commodities. This is likely due to increased
+            production during the rainy season. For example, the price of
+            cucumbers drops by 20% in the monsoon season, while the price of
+            tomatoes drops by 10%.
+          </p>
+        </div>
+      </div>
+      <div class="plot-container" id="analysis-festival-container">
+        <h3>Heapmap showing price fluctuation of Commodities Based on Festivals</h3><br>
+        <img
+          id="festival-image"
+          src="{% static 'price_prediction/images/festival_heatmap.png' %}"
+          alt="Festivals Heatmap"
+        /><br />
+        <div id="festival-analysis">
+          <p>
+            Price fluctuation of Commodities on the basis of Festivals:<br><br> 1.Prices
+            tend to increase significantly around major festivals in Nepal. For
+            example, the price of apples nearly doubles around Dashain, the
+            largest and longest festival in Nepal. Similarly, the price of
+            garlic nearly doubles around Lhosar, the Tibetan New Year.<br><br> 2.Prices
+            also tendto fluctuate around smaller festivals. For example, the
+            price of cucumbers increases slightly around Gai Jatra and Ghode
+            Jatra, two festivals that take place close together.<br><br> 3.Not all
+            festivals have a noticeable impact on prices. For example, the price
+            of tomatoes remains relatively stable throughout the year.
+          </p>
+        </div>
+      </div>
+      <div class="plot-container">
+        <img
+          id="2022-pie"
+          src="{% static 'price_prediction/images/pie1.png' %}"
+          alt="Festivals Heatmap"
+        />
+      </div>
+      <div class="plot-container">
+        <img
+          id="2023-pie"
+          src="{% static 'price_prediction/images/pie2.png' %}"
+          alt="Festivals Heatmap"
+        />
+      </div>
+    </div>
+  </body>
+</html>

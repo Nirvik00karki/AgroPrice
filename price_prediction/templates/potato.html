@@ -1,0 +1,101 @@
+{% load static %}
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Commodity Detail</title>
+    <!-- Add your CSS imports and other head content here -->
+    <link rel="stylesheet" href="{% static 'price_prediction/commodity_detail.css' %}">
+</head>
+<body>
+    <header>
+        {% include 'navbar.html' %}
+    </header>
+
+    <section>
+        <div class="commodity-detail">
+            <div class="commodity-image">
+                <img src="{% static 'price_prediction/images/comd1.png' %}" alt="Commodity Image">
+            </div>
+            <div class="commodity-info">
+                <h2>Commodity : Potato</h2>
+                <p>Type : Potato White</p>
+            </div>
+        </div>
+    </section>
+
+    <!-- Section for displaying graphs -->
+    <section class="graphs">
+        <h2>Price Trends Graph</h2>
+        <div class="graph-container">
+            <!-- Add your graph or chart rendering code here -->
+            <!-- Example: -->
+            <img src="{% static 'price_prediction/images/bar2.png' %}" alt="Price Trends Graph">
+        </div>
+    </section>
+    
+<!-- 
+    <section>
+        <h1>Commodity Details</h1>
+    <div id="predicted-price-container">
+        <p style="margin-top: 10px;">Current Price: <span id="">47.0</span></p>
+        <p style="margin-top: 10px;">Predicted Price(Weekly): <span id="predicted-price"></span></p>
+    </div>
+
+    <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.5.1/jquery.min.js"></script>
+    <script>
+        $(document).ready(function () {
+            $.ajax({
+                url: '/train_model/',
+                method: 'GET',
+                success: function (response) {
+                    // Update the HTML with the predicted price
+                    $('#predicted-price').text(response.PredictedPriceNextWeek);
+                },
+                error: function (error) {
+                    console.error('Error fetching predicted price:', error);
+                }
+            });
+        });
+    </script>
+    </section> -->
+    <section>
+        <h1>Price Prediction</h1>
+        <label for="selected_date">Select Date:</label>
+        <input type="date" id="selected_date"><br><br>
+        <button onclick="predictPrice()">Predict</button><br><br>
+        <p id="predicted_price"></p>
+    
+        <script>
+            function predictPrice() {
+                const selectedDate = document.getElementById("selected_date").value;
+    
+                fetch('/api/train_model/', {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json'
+                    },
+                    body: JSON.stringify({
+                        selected_date: selectedDate
+                    })
+                })
+                .then(response => {
+                    if (!response.ok) {
+                        throw new Error('Network response was not ok.');
+                    }
+                    return response.json();
+                })
+                .then(data => {
+                    const predictedPrices = data.predicted_prices;
+                    const formattedPrices = predictedPrices.map(item => `${item.Commodity}: ${item.Date} - ${item.PredictedPrice}`);
+                    document.getElementById("predicted_price").innerText = `Predicted Prices: ${formattedPrices.join(', ')}`;
+                })
+                .catch(error => {
+                    console.error('Error:', error);
+                    document.getElementById("predicted_price").innerText = 'Error occurred while fetching data.';
+                });
+            }
+        </script>
+    </section>    
+</body>
+</html>

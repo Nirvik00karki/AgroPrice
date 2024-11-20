@@ -1,0 +1,39 @@
+@startuml
+title Agroprice State Machine
+
+[*] --> UserNotAuthenticated : User Accesses Website
+
+state UserNotAuthenticated {
+  [*] --> LoginPage : User Not Authenticated
+  LoginPage --> AuthenticationSuccessful : Provide Login Credentials
+}
+
+state AuthenticationSuccessful {
+  [*] --> CommoditySelection : Authentication Successful
+}
+
+state CommoditySelection {
+  [*] --> DataRetrieval : User Selects Commodity
+}
+
+state DataRetrieval {
+  [*] --> DataRetrievalSuccess : Web Retrieves Historical Data
+  DataRetrievalSuccess --> PredictionRequest : Data Retrieval Successful
+  DataRetrieval --> DataUnavailable : Data Retrieval Unsuccessful
+}
+
+state PredictionRequest {
+  [*] --> PricePrediction : User Requests Price Prediction
+}
+
+state PricePrediction {
+  [*] --> [*] : Prediction Module Applies Model
+}
+
+state DataUnavailable {
+  [*] --> [*] : Display Data Unavailability Message
+}
+
+[*] --> UserNotAuthenticated : Logout
+
+@enduml
